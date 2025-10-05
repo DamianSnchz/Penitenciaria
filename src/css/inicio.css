@@ -1,0 +1,11 @@
+h1 {
+    font-size: var(--font-size-32);
+    color: #fff;;
+}
+p{
+    font-size: var(--font-size-16);
+    color: #fff;
+    width: 100vh;
+}
+
+

@@ -1,0 +1,54 @@
+.title h1{
+    font-size: var(--font-size-32);
+    font-weight: bold;
+}
+
+.title h4{
+    font-size: var(--font-size-14);
+    font-weight: bold;
+    color: rgb(82, 81, 81);
+}
+
+.title-container button{
+    height: fit-content;
+}
+
+.container-component button {
+    height: fit-content;
+}
+
+/*---------------formulario----------------*/
+
+.container-component h2{
+    font-size: 24px;
+    color: #fff;
+}
+
+label{
+    color: #fff;
+    font-size: var(--font-size-14);
+}
+
+input, select{
+    color: var(--color-border);
+    background: var(--color-fondo-input);
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    width: 226px;
+    height: 44px;
+}
+
+.input-container {
+    display: flex;
+    justify-content: space-between;
+    width: 480px;
+    margin-bottom: 20px;
+}
+
+.input-container div{
+    display: flex;
+    flex-direction: column;
+}
+
+
