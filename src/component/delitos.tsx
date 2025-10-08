@@ -1,5 +1,5 @@
-//importar css
-import "../css/delitos.css"
+
+import { Link } from "react-router-dom";
 
 function Delitos() {
     return (
@@ -8,47 +8,10 @@ function Delitos() {
                 <div className="title">
                     <h1>Gestión de delitos</h1>
                     <h4>
-                        Registrar, modificar y gestionar datos de los delitos cometidos por los internos, incluyendo información del juez que dicto el delito.
+                        Modificar y gestionar datos de los delitos cometidos por los internos, incluyendo información del juez que dicto el delito.
                     </h4>
                 </div>
                 <br/>
-                <div className="form-container ">
-                    <h2> Información del delito</h2>
-                    <form className="w-100">
-                        <div className="d-flex flex-column mb-4">
-                            <label className="form-label" >Delito</label>
-                            <select className="w-50" aria-label="x">
-                                <option selected >Seleccione Delito</option>
-                                <option value="M">Homicidio</option>
-                                <option value="F">Asesinado</option>
-                            </select>
-                        </div>
-                        <div className="d-flex flex-column mb-4">
-                            <label className="form-label" >Juez</label>
-                            <input type="text" className="w-50"/>
-                        </div>
-                        <div className="d-flex flex-column mb-4">
-                            <label className="form-label" >Fecha de Detención</label>
-                            <input type="date" className="w-50"/>
-                        </div>
-                        <div className="d-flex flex-column mb-4">
-                            <label className="form-label" >Fecha de inicio de condena</label>
-                            <input type="date" className="w-50"/>
-                        </div>
-                        <div className="d-flex flex-column mb-4">
-                            <label className="form-label" >Duración de Condena</label>
-                            <input type="number" className="w-50"/>
-                        </div>
-                        <div className="d-flex justify-content-end">
-                            <button className="btn btn-primary mx-2" type="submit">
-                                Guardar
-                            </button>
-                            <button className="btn btn-outline-secondary" type="submit">
-                                Cancelar
-                            </button>
-                        </div>
-                    </form>
-                </div>
                 <div className="input-container">
                     <div className="w-100">
                         <label className="form-label">Buscar Delito</label>

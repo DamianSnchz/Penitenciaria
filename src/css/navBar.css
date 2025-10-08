@@ -1,0 +1,38 @@
+header {
+    height: 100%;
+}
+
+
+li {
+    list-style: none;
+    border-radius: 10px;
+    display: flex;
+    padding: 0.5px 20px;
+    align-items: center;
+}
+
+li:hover{
+    background-color: var(--color-select);;
+}
+
+
+a {
+    font-size: var(--font-size-14);
+    text-decoration: none;
+}
+
+a:link{
+    color: #fff;
+}
+
+.nav-item svg{
+    fill: white;
+}
+
+.nav-item:hover svg {
+    fill: #fff;
+}
+
+ul{
+    text-align: start;
+}

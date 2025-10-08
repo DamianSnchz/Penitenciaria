@@ -1,7 +1,15 @@
 //importar css
+import { Link } from "react-router-dom";
 import "../css/internos.css"
+//importar uselocation para poder recibir datos por parametros
+import { useLocation } from "react-router-dom";
 
 function Internos() {
+	//variable para el recibimiento de parametros
+	const location = useLocation();
+	//variable para guardar los datos enviados por parametros
+	const dato = location.state as {delito:string; juez:string};
+
 	return (
 		<div className="container-component">
 			<article>
@@ -12,7 +20,7 @@ function Internos() {
 							Registrar, modificar y gestionar datos personales de internos, incluyendo información de ingreso.
 						</h4>
 					</div>
-					<button className="btn btn-outline-secondary" type="button">Registrar Delito</button>
+					<Link to={"/registrarDelito"} className="btn btn-outline-secondary btn-sm h-fitContent">Registrar Delito</Link>
 				</div>
 				<div className="form-container ">
 					<h2> Información del Inteno</h2>
@@ -71,7 +79,7 @@ function Internos() {
 							</div>
 						</div>
 						<div className="input-container">
-							<div style={{ width: "100%" }}>
+							<div className="w-100">
 								<label className="form-label">Dirección</label>
 								<input className="" type="text" style={{ width: "100%" }} />
 							</div>
@@ -88,6 +96,22 @@ function Internos() {
 							<div>
 								<label className="form-label" >Número de documento</label>
 								<input type="number" />
+							</div>
+						</div>
+						<br />
+						<h2>Información de Delito</h2>
+						<div className="input-container">
+							<div>
+								<label className="form-label" >Delito</label>
+								{/*Uso de "encadenamiento opcional" ?. sirver para acceder a una propiedad solo si el objeto no es nulo ni undefined
+								si dato es un objeto devuelve -> dato.delito ; si es null o undefined devuelve -> undefined (sin lanzar error)
+								"Coalescencia" ?? sirve para obtener un valor por defecto si la expresión de la izq. es null o undefined
+								*/}
+								<input type="text" value={dato?.delito??""} readOnly/>
+							</div>
+							<div>
+								<label className="form-label" >Juez de la Causa</label>
+								<input type="text" value={dato?.juez??""} readOnly/>
 							</div>
 						</div>
 						<br />
@@ -117,7 +141,7 @@ function Internos() {
 					</form>
 				</div>
 				<div className="input-container">
-					<div style={{ width: "100%" }}>
+					<div className="w-100">
 						<label className="form-label">Buscar Legajo</label>
 						<input className="" type="text" style={{ width: "100%" }} />
 					</div>
