@@ -19,7 +19,7 @@ public class ControllerPenitenciaria {
 
     // Listar todas
     @GetMapping
-    public List<Penitenciaria> listarTodas() {
+    public List<Penitenciaria> listar() {
         return service.listar();
     }
 

@@ -14,9 +14,6 @@ public class Penitenciaria {
     @Column(name = "penNom", nullable = false, unique = true, length = 50)
     private String penNom;
 
-    @Column(name = "penPcia", nullable = false, length = 30)
-    private String penPcia;
-
     @Column(name = "penDireccion", nullable = false, length = 50)
     private String penDireccion;
 
@@ -42,14 +39,6 @@ public class Penitenciaria {
 
     public void setPenNom(String penNom) {
         this.penNom = penNom;
-    }
-
-    public String getPenPcia() {
-        return penPcia;
-    }
-
-    public void setPenPcia(String penPcia) {
-        this.penPcia = penPcia;
     }
 
     public String getPenDireccion() {
@@ -81,10 +70,9 @@ public class Penitenciaria {
     public Penitenciaria() {
     }
 
-    public Penitenciaria(Long idPenitenciaria, String penNom, String penPcia, String penDireccion, Integer penCapacidad, String penTipo) {
+    public Penitenciaria(Long idPenitenciaria, String penNom, String penDireccion, Integer penCapacidad, String penTipo) {
         this.idPenitenciaria = idPenitenciaria;
         this.penNom = penNom;
-        this.penPcia = penPcia;
         this.penDireccion = penDireccion;
         this.penCapacidad = penCapacidad;
         this.penTipo = penTipo;
