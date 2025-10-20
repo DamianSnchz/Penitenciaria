@@ -1,0 +1,40 @@
+:root {
+  --color-primario: #121A21;
+  --color-select: #243647;
+  --color-hedear-table: #1A2633;
+  --color-border: #91ADC9;
+  --color-fondo-input: #1A2633;
+  --color-btn: #1280ED;
+  --font-family: Public Sans;
+  --font-size-14: 14px; 
+  --font-size-16: 16px;
+  --font-size-32: 32px; 
+}
+
+
+html, body{
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-primario);
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+}
+
+
+
+
+/*---------------Tablas----------------*/
+.table thead th{
+  background: var(--color-hedear-table)!important;
+  color: #fff;
+}
+
+.table tbody tr th, td{
+  background: var(--color-primario)!important;
+  color: #fff!important;
+}
+

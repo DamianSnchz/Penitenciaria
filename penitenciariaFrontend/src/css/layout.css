@@ -1,0 +1,9 @@
+
+.layout-container{
+    height: 100vh;
+	background: var(--color-primario);
+	display: flex;
+	justify-content: space-between;
+    padding: 30px 10px;
+}
+
