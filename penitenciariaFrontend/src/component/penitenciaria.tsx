@@ -9,7 +9,7 @@ import { InterfacePenitenciaria } from "../interface/interfacePenitenciaria";
 function Penitenciaria() {
 
     //importamos mis datos y funciones de mi proveedor
-    const { validarForm, datosForm, setDatosForm, setCampos, error, datosPenitenciaria,enviarDatosPenitenciaria} = useCartContext();
+    const { validarForm, datosForm, setDatosForm, setCampos, error, datosPenitenciaria,enviarDatosPenitenciaria, eliminarPenitenciaria,editarPenitenciaria} = useCartContext();
 
     useEffect(() => {
         setCampos(["penNom", "penCapacidad", "penDireccion", "penTipo"]);
@@ -21,6 +21,8 @@ function Penitenciaria() {
     }, [])
 
 
+    
+
     function handleChange(e: any) {
         setDatosForm({ ...datosForm, [e.target.name]: e.target.value });
     }
@@ -28,9 +30,18 @@ function Penitenciaria() {
 
     function handledSubmit(e: React.FormEvent) {
         e.preventDefault();
+        const id = datosForm.idPenitenciaria ?? 0;
+        
         if (validarForm()) {
-            console.log("entro en el if");
-            enviarDatosPenitenciaria();
+
+            
+            if(id != 0){
+                console.log("Entro a editar");
+                editarPenitenciaria(datosForm.idPenitenciaria);
+            }else{
+                enviarDatosPenitenciaria();
+            }
+            
         }
         return false;
     }
@@ -48,6 +59,7 @@ function Penitenciaria() {
                 <div className="form-container ">
                     <h2> Información de Penitenciaria</h2>
                     <form className="w-100" onSubmit={handledSubmit}>
+                        <input hidden id="idPenitenciaria" name="idPenitenciaria" value={datosForm.idPenitenciaria  ?? 0} readOnly/>
                         <div className="d-flex flex-column mb-4">
                             <label className="form-label" htmlFor="penNom">Nombre de Penitenciaria</label>
                             <input type="text" className="w-50" id="penNom" name="penNom" onChange={handleChange} value={datosForm?.penNom ?? ""}/>
@@ -65,8 +77,8 @@ function Penitenciaria() {
                         </div>
                         <div className="d-flex flex-column mb-4">
                             <label className="form-label" htmlFor="penTipo">Tipo</label>
-                            <select className="w-50" aria-label="x" id="penTipo" name="penTipo" onChange={handleChange}>
-                                <option value={datosForm?.penTipo ?? ""} >Seleccione Tipo</option>
+                            <select className="w-50" aria-label="x" id="penTipo" name="penTipo" onChange={handleChange} value={datosForm?.penTipo ?? ""}>
+                                <option value="" >Seleccione Tipo</option>
                                 <option value="Hombres">Hombres</option>
                                 <option value="Mujeres">Mujeres</option>
                                 <option value="Mixto">Mixto</option>
@@ -100,10 +112,10 @@ function Penitenciaria() {
                                 <td>{e.penCapacidad}</td>
                                 <td>{e.penTipo}</td>
                                 <td>
-                                    <button className="btn btn-primary btn-sm me-2">
+                                    <button className="btn btn-primary btn-sm me-2" onClick={()=> setDatosForm(e)}>
                                         Editar
                                     </button>
-                                    <button className="btn btn-danger btn-sm">
+                                    <button className="btn btn-danger btn-sm" onClick={() => eliminarPenitenciaria(e.idPenitenciaria)}>
                                         Eliminar
                                     </button>
                                 </td>

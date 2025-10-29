@@ -12,9 +12,12 @@ public class Interno {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long legajo;
 
-    @Column(name = "intNomApe", length = 50, nullable = false)
-    private String nombreApellido;
+    @Column(name = "intNombre", length = 50, nullable = false)
+    private String nombre;
 
+    @Column(name = "intApellido", length = 50, nullable = false)
+    private String apellido;
+    
     @Column(name = "intTipo", length = 3, nullable = false)
     private String tipo;
 
@@ -50,7 +53,7 @@ public class Interno {
 
     @ManyToOne
     @JoinColumn(name = "idPenitenciaria", nullable = false)
-    private Long idPenitenciaria; // podrías reemplazar por una relación ManyToOne
+    private Penitenciaria idPenitenciaria;
 
     @ManyToOne
     @JoinColumn(name = "idDelito", nullable = false)
@@ -60,14 +63,16 @@ public class Interno {
     private String estado = "activo";
 
     // ===== CONSTRUCTORES =====
-    public Interno() {}
+    public Interno() {
+    }
 
-    public Interno(Long legajo, String nombreApellido, String tipo, Integer dni, String sexo, String nacionalidad,
-                   String alias, LocalDate fechaNacimiento, String departamentoNacimiento, String provinciaNacimiento,
-                   String domicilio, String estadoCivil, String profesion, Long idPenitenciaria,
-                   Delito idDelito, String estado) {
+    public Interno(Long legajo, String nombre, String apellido, String tipo, Integer dni, String sexo, String nacionalidad,
+            String alias, LocalDate fechaNacimiento, String departamentoNacimiento, String provinciaNacimiento,
+            String domicilio, String estadoCivil, String profesion, Penitenciaria idPenitenciaria,
+            Delito idDelito, String estado) {
         this.legajo = legajo;
-        this.nombreApellido = nombreApellido;
+        this.nombre = nombre;
+        this.apellido = apellido;
         this.tipo = tipo;
         this.dni = dni;
         this.sexo = sexo;
@@ -85,51 +90,140 @@ public class Interno {
     }
 
     // ===== GETTERS Y SETTERS =====
-    public Long getLegajo() { return legajo; }
-    public void setLegajo(Long legajo) { this.legajo = legajo; }
+    public Long getLegajo() {
+        return legajo;
+    }
 
-    public String getNombreApellido() { return nombreApellido; }
-    public void setNombreApellido(String nombreApellido) { this.nombreApellido = nombreApellido; }
+    public void setLegajo(Long legajo) {
+        this.legajo = legajo;
+    }
 
-    public String getTipo() { return tipo; }
-    public void setTipo(String tipo) { this.tipo = tipo; }
+    public String getNombre() {
+        return nombre;
+    }
 
-    public Integer getDni() { return dni; }
-    public void setDni(Integer dni) { this.dni = dni; }
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
+    
+    public String getApellido() {
+        return apellido;
+    }
 
-    public String getSexo() { return sexo; }
-    public void setSexo(String sexo) { this.sexo = sexo; }
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
-    public String getNacionalidad() { return nacionalidad; }
-    public void setNacionalidad(String nacionalidad) { this.nacionalidad = nacionalidad; }
 
-    public String getAlias() { return alias; }
-    public void setAlias(String alias) { this.alias = alias; }
+    public String getTipo() {
+        return tipo;
+    }
 
-    public LocalDate getFechaNacimiento() { return fechaNacimiento; }
-    public void setFechaNacimiento(LocalDate fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
 
-    public String getDepartamentoNacimiento() { return departamentoNacimiento; }
-    public void setDepartamentoNacimiento(String departamentoNacimiento) { this.departamentoNacimiento = departamentoNacimiento; }
+    public Integer getDni() {
+        return dni;
+    }
 
-    public String getProvinciaNacimiento() { return provinciaNacimiento; }
-    public void setProvinciaNacimiento(String provinciaNacimiento) { this.provinciaNacimiento = provinciaNacimiento; }
+    public void setDni(Integer dni) {
+        this.dni = dni;
+    }
 
-    public String getDomicilio() { return domicilio; }
-    public void setDomicilio(String domicilio) { this.domicilio = domicilio; }
+    public String getSexo() {
+        return sexo;
+    }
 
-    public String getEstadoCivil() { return estadoCivil; }
-    public void setEstadoCivil(String estadoCivil) { this.estadoCivil = estadoCivil; }
+    public void setSexo(String sexo) {
+        this.sexo = sexo;
+    }
 
-    public String getProfesion() { return profesion; }
-    public void setProfesion(String profesion) { this.profesion = profesion; }
+    public String getNacionalidad() {
+        return nacionalidad;
+    }
 
-    public Long getIdPenitenciaria() { return idPenitenciaria; }
-    public void setIdPenitenciaria(Long idPenitenciaria) { this.idPenitenciaria = idPenitenciaria; }
+    public void setNacionalidad(String nacionalidad) {
+        this.nacionalidad = nacionalidad;
+    }
 
-    public Delito getIdDelito() { return idDelito; }
-    public void setIdDelito(Delito idDelito) { this.idDelito = idDelito; }
+    public String getAlias() {
+        return alias;
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public void setAlias(String alias) {
+        this.alias = alias;
+    }
+
+    public LocalDate getFechaNacimiento() {
+        return fechaNacimiento;
+    }
+
+    public void setFechaNacimiento(LocalDate fechaNacimiento) {
+        this.fechaNacimiento = fechaNacimiento;
+    }
+
+    public String getDepartamentoNacimiento() {
+        return departamentoNacimiento;
+    }
+
+    public void setDepartamentoNacimiento(String departamentoNacimiento) {
+        this.departamentoNacimiento = departamentoNacimiento;
+    }
+
+    public String getProvinciaNacimiento() {
+        return provinciaNacimiento;
+    }
+
+    public void setProvinciaNacimiento(String provinciaNacimiento) {
+        this.provinciaNacimiento = provinciaNacimiento;
+    }
+
+    public String getDomicilio() {
+        return domicilio;
+    }
+
+    public void setDomicilio(String domicilio) {
+        this.domicilio = domicilio;
+    }
+
+    public String getEstadoCivil() {
+        return estadoCivil;
+    }
+
+    public void setEstadoCivil(String estadoCivil) {
+        this.estadoCivil = estadoCivil;
+    }
+
+    public String getProfesion() {
+        return profesion;
+    }
+
+    public void setProfesion(String profesion) {
+        this.profesion = profesion;
+    }
+
+    public Penitenciaria getIdPenitenciaria() {
+        return idPenitenciaria;
+    }
+
+    public void setIdPenitenciaria(Penitenciaria idPenitenciaria) {
+        this.idPenitenciaria = idPenitenciaria;
+    }
+
+    public Delito getIdDelito() {
+        return idDelito;
+    }
+
+    public void setIdDelito(Delito idDelito) {
+        this.idDelito = idDelito;
+    }
+
+    public String getEstado() {
+        return estado;
+    }
+
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 }

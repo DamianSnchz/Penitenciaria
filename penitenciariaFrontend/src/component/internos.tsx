@@ -12,19 +12,17 @@ function Internos() {
 	//variable para el recibimiento de parametros
 	const location = useLocation();
 	//función compartida del proveedor de datos
-	const { validarForm, datosForm, setDatosForm, error, setCampos, campos} = useCartContext();
+	const { validarForm, datosForm, setDatosForm, error, setCampos, datosDelito, setDatosDelito} = useCartContext();
 
 
 	
 
 	useEffect(() => {
 		//paso los campos de cada inputs para poder hacer las validaciones
-		setCampos(["apellido", "nombre", "genero", "alias", "fechaNac", "estadoCivil", "dptoNac",
-			"provinciaNac", "nacionalidad", "profesion", "direccion", "DNI", "tipo","delito","juez", 
-			"penitenciaria","fechaIngreso"]);
+		setCampos(["intApellido", "intNombre", "intSexo", "intAlias", "intFechaNac", "intEstadoCivil", "intDptoNac",
+			"intProvinciaNac", "intNacionalidad", "intProfesion", "intDireccion", "intDni", "intTipo","delito","juez", 
+			"idPenitenciaria","fechaIngreso"]);
 
-		console.log("*****************Valor del objeto datosForm en interns")
-		console.log(datosForm);
 		return() => {
 			//limpio "campos" para que al ingresar al componente "delitos" pueda cargar los ID de sus nuevos inputs
 			//para hacer las validaciones
@@ -44,7 +42,12 @@ function Internos() {
 	function handledSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		//pasamos las fechas a validar
-		return validarForm(["fechaNac","fechaIngreso"]);
+		const valor = validarForm(["intFechaNac","fechaIngreso"]);
+		if(valor){
+			//si es true agrego un SubObjeto a los datos
+			setDatosForm({...datosForm, idDelito:{...datosDelito}});
+		}
+		return valor;
 	}
 
 
@@ -65,89 +68,89 @@ function Internos() {
 					<form className="w-100" id="form-internos" onSubmit={(e) => { handledSubmit(e) }}>
 						<div className="input-container">
 							<div>
-								<label className="form-label" htmlFor="apellido">Apellido</label>
-								<input type="text" name="apellido" id="apellido" onChange={handleChange} value={datosForm?.apellido ?? ""}/>
-								{error.apellido && <span className="error" >{error.apellido}</span>}
+								<label className="form-label" htmlFor="intApellido">Apellido</label>
+								<input type="text" name="intApellido" id="intApellido" onChange={handleChange} value={datosForm?.intApellido ?? ""}/>
+								{error.intApellido && <span className="error" >{error.intApellido}</span>}
 							</div>
 							<div>
-								<label className="form-label" htmlFor="nombre">Nombre</label>
-								<input type="text" name="nombre" id="nombre" onChange={handleChange} value={datosForm?.nombre ?? ""}/>
-								{error.nombre && <span className="error" >{error.nombre}</span>}
+								<label className="form-label" htmlFor="intNombre">Nombre</label>
+								<input type="text" name="intNombre" id="intNombre" onChange={handleChange} value={datosForm?.intNombre ?? ""}/>
+								{error.intNombre && <span className="error" >{error.intNombre}</span>}
 							</div>
 						</div>
 						<div className="input-container">
 							<div>
-								<label className="form-label" htmlFor="genero">Genero</label>
-								<select aria-label="x" name="genero" id="genero" onChange={handleChange}>
-									<option value={datosForm?.genero ?? ""} >Seleccione género</option>
+								<label className="form-label" htmlFor="intSexo">Genero</label>
+								<select aria-label="x" name="intSexo" id="intSexo" onChange={handleChange} value={datosForm?.intgenero ?? ""}>
+									<option value="" >Seleccione género</option>
 									<option value="M">Masculino</option>
 									<option value="F">Femenino</option>
 								</select>
-								{error.genero && <span className="error" >{error.genero}</span>}
+								{error.intSexo && <span className="error" >{error.intSexo}</span>}
 							</div>
 							<div>
-								<label className="form-label" htmlFor="alias">alias</label>
-								<input className="" type="text" name="alias" id="alias" onChange={handleChange} value={datosForm?.alias ?? ""}/>
-								{error.alias && <span className="error" >{error.alias}</span>}
+								<label className="form-label" htmlFor="intAlias">alias</label>
+								<input className="" type="text" name="intAlias" id="intAlias" onChange={handleChange} value={datosForm?.intAlias ?? ""}/>
+								{error.intAlias && <span className="error" >{error.intAlias}</span>}
 							</div>
 						</div>
 						<div className="input-container">
 							<div>
 								<label className="form-label" >Fecha nacimiento</label>
-								<input type="date" name="fechaNac" id="fechaNac" onChange={handleChange} value={datosForm?.fechaNac ?? ""}/>
-								{error.fechaNac && <span className="error" >{error.fechaNac}</span>}
+								<input type="date" name="intFechaNac" id="intFechaNac" onChange={handleChange} value={datosForm?.intFechaNac ?? ""}/>
+								{error.intFechaNac && <span className="error" >{error.intFechaNac}</span>}
 							</div>
 							<div>
 								<label className="form-label" >Estado Civil</label>
-								<input type="text" name="estadoCivil" id="estadoCivil" onChange={handleChange} value={datosForm?.estadoCivil ?? ""}/>
-								{error.estadoCivil && <span className="error" >{error.estadoCivil}</span>}
+								<input type="text" name="intEstadoCivil" id="intEstadoCivil" onChange={handleChange} value={datosForm?.intEstadoCivil ?? ""}/>
+								{error.intEstadoCivil && <span className="error" >{error.intEstadoCivil}</span>}
 							</div>
 						</div>
 						<div className="input-container">
 							<div>
 								<label className="form-label" >Departamento de Nacimiento</label>
-								<input className="" type="text" name="dptoNac" id="dptoNac" onChange={handleChange} value={datosForm?.dptoNac ?? ""}/>
-								{error.dptoNac && <span className="error" >{error.dptoNac}</span>}
+								<input className="" type="text" name="intDptoNac" id="intDptoNac" onChange={handleChange} value={datosForm?.intDptoNac ?? ""}/>
+								{error.intDptoNac && <span className="error" >{error.intDptoNac}</span>}
 							</div>
 							<div>
-								<label className="form-label" htmlFor="provinciaNac">Provincia de Nacimiento</label>
-								<input className="" type="text" name="provinciaNac" id="provinciaNac" onChange={handleChange} value={datosForm?.provinciaNac ?? ""}/>
-								{error.provinciaNac && <span className="error" >{error.provinciaNac}</span>}
+								<label className="form-label" htmlFor="intProvinciaNac">Provincia de Nacimiento</label>
+								<input className="" type="text" name="intProvinciaNac" id="intProvinciaNac" onChange={handleChange} value={datosForm?.intProvinciaNac ?? ""}/>
+								{error.intProvinciaNac && <span className="error" >{error.intProvinciaNac}</span>}
 							</div>
 						</div>
 						<div className="input-container">
 							<div>
-								<label className="form-label" htmlFor="nacionalidad">Nacionalidad</label>
-								<input className="" type="text" name="nacionalidad" id="nacionalidad" onChange={handleChange} value={datosForm?.nacionalidad ?? ""}/>
-								{error.nacionalidad && <span className="error" >{error.nacionalidad}</span>}
+								<label className="form-label" htmlFor="intNacionalidad">Nacionalidad</label>
+								<input className="" type="text" name="intNacionalidad" id="intNacionalidad" onChange={handleChange} value={datosForm?.intNacionalidad ?? ""}/>
+								{error.intNacionalidad && <span className="error" >{error.intNacionalidad}</span>}
 							</div>
 							<div>
-								<label className="form-label" htmlFor="profesion" >Profesión</label>
-								<input className="" type="text" name="profesion" id="profesion" onChange={handleChange} value={datosForm?.profesion ?? ""}/>
-								{error.profesion && <span className="error" >{error.profesion}</span>}
+								<label className="form-label" htmlFor="intProfesion" >Profesión</label>
+								<input className="" type="text" name="intProfesion" id="intProfesion" onChange={handleChange} value={datosForm?.intProfesion ?? ""}/>
+								{error.intProfesion && <span className="error" >{error.intProfesion}</span>}
 							</div>
 						</div>
 						<div className="input-container">
 							<div className="w-100">
-								<label className="form-label" htmlFor="direccion">Dirección</label>
-								<input className="w-100" type="text" name="direccion" id="direccion" onChange={handleChange} value={datosForm?.direccion ?? ""}/>
-								{error.direccion && <span className="error" >{error.direccion}</span>}
+								<label className="form-label" htmlFor="intDireccion">Dirección</label>
+								<input className="w-100" type="text" name="intDireccion" id="intDireccion" onChange={handleChange} value={datosForm?.intDireccion ?? ""}/>
+								{error.intDireccion && <span className="error" >{error.intDireccion}</span>}
 							</div>
 						</div>
 						<div className="input-container gap-4">
 							<div>
-								<label className="form-label me-5" htmlFor="tipo">Tipo de Documento</label>
-								<select aria-label="tipo" name="tipo" id="tipo" onChange={handleChange}>
-									<option value={datosForm?.tipo ?? ""}>Tipo</option>
+								<label className="form-label me-5" htmlFor="intTipo">Tipo de Documento</label>
+								<select aria-label="intTipo" name="intTipo" id="intTipo" onChange={handleChange}>
+									<option value={datosForm?.inttipo ?? ""}>Tipo</option>
 									<option value="DNI">DNI</option>
 									<option value="CUIT">CUIT</option>
 								</select>
-								{error.tipo && <span className="error" >{error.tipo}</span>}
+								{error.intTipo && <span className="error" >{error.intTipo}</span>}
 							</div>
 							<div>
-								<label className="form-label" htmlFor="DNI" >Número de documento</label>
-								<input className="" type="text" name="DNI" id="DNI" onChange={handleChange} value={datosForm?.DNI ?? ""}/>
-								{error.DNI && <span className="error" >{error.DNI}</span>}
+								<label className="form-label" htmlFor="intDni" >Número de documento</label>
+								<input className="" type="text" name="intDni" id="intDni" onChange={handleChange} value={datosForm?.intDni ?? ""}/>
+								{error.intDni && <span className="error" >{error.intDni}</span>}
 							</div>
 						</div>
 						<br />
@@ -159,12 +162,12 @@ function Internos() {
 								si dato es un objeto devuelve -> dato.delito ; si es null o undefined devuelve -> undefined (sin lanzar error)
 								"Coalescencia" ?? sirve para obtener un valor por defecto si la expresión de la izq. es null o undefined
 								*/}
-								<input type="text" name="delito" id="delito" value={datosForm?.Rdelito ?? ""} readOnly/>
+								<input type="text" name="delito" id="delito" value={datosForm?.delito ?? ""} readOnly/>
 								{error.delito && <span className="error" >Debe registrar un delito</span>}
 							</div>
 							<div>
 								<label className="form-label" htmlFor="juez">Juez de la Causa</label>
-								<input type="text" name="juez" id="juez" value={datosForm?.Rjuez ?? ""} readOnly/>
+								<input type="text" name="juez" id="juez" value={datosForm?.juez ?? ""} readOnly/>
 								{error.juez && <span className="error" >Debe registrar un delito</span>}
 							</div>
 						</div>
@@ -172,13 +175,13 @@ function Internos() {
 						<h2>Información de Ingreso</h2>
 						<div className="input-container gap-4">
 							<div>
-								<label className="form-label" htmlFor="penitenciaria">Instalación de ingreso</label>
-								<select aria-label="SeleccionPenitenciaria" name="penitenciaria" id="penitenciaria" onChange={handleChange}>
-									<option value={datosForm?.penitenciaria ?? ""}>Seleccione Penitenciaria</option>
-									<option value="prueba1">prueba1</option>
-									<option value="prueba2">prueba2</option>
+								<label className="form-label" htmlFor="idPenitenciaria">Instalación de ingreso</label>
+								<select aria-label="SeleccionPenitenciaria" name="idPenitenciaria" id="idPenitenciaria" value={datosForm?.idPenitenciaria ?? ""} onChange={handleChange}>
+									<option value="">Seleccione Penitenciaria</option>
+									<option value="1">prueba1</option>
+									<option value="2">prueba2</option>
 								</select>
-								{error.penitenciaria && <span className="error" >Debe seleccionar una penitenciaria</span>}
+								{error.idPenitenciaria && <span className="error" >Debe seleccionar una penitenciaria</span>}
 							</div>
 							<div>
 								<label className="form-label" htmlFor="fechaIngreso">Fecha de ingreso</label>

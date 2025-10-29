@@ -2,16 +2,20 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCartContext } from "../contextProvider/context.jsx";
 
+
 function RegistrarD() {
     
     //variable para la navegación
     const navegar = useNavigate();
     //variables y funciones de mi proveedor de datos
-    const {validarForm,setCampos, setDatosForm,datosForm, error,campos} = useCartContext();
+    const {validarForm,setCampos, setDatosForm,datosForm, error,setDatosDelito, datosDelito} = useCartContext();
+    
+
+
 
     useEffect(()=>{
         //cargamos los campos de los inputs para hacer las validacios
-        setCampos(["Rdelito","Rjuez","fechaDet","fechaIniCon","duracion"]);
+        setCampos(["delDelito","delJuez","delFechDet","delFechIniCondena","delDuracion"]);
 
         return()=>{
             //limpio "campos"
@@ -24,16 +28,17 @@ function RegistrarD() {
     function handleChange(e: any) {
         //para la validacion del formulario
         setDatosForm({...datosForm, [e.target.name]: e.target.value});
+        setDatosDelito({...datosDelito, [e.target.name]: e.target.value});
     }
 
     function handleSubmit(e: React.FormEvent){
         //evita la carga de la pagina
         e.preventDefault();
         //paso las claves para validar las fechas. Si el metodo me devuelve "true" realizara la navegaciòn a "/internos"
-        const valor = validarForm(["fechaDet","fechaIniCon"])
-        console.log("+++++++++++valor: " + valor);
+        const valor = validarForm(["delFechDet","delFechIniCondena"]);
         if(valor){
-            setDatosForm({...datosForm,delito: datosForm.Rdelito, juez: datosForm.Rjuez})
+            //para poder hacer las validaciones en la IU internos
+            setDatosForm({...datosForm,delito: datosForm.delDelito, juez: datosForm.delJuez})
             //le doy tiempo de 1s para que React termine de ejecutar el metodo setDatosForm()
             //luego realiza la navegaciòn
             setTimeout(()=>{navegar("/internos");},1000);
@@ -56,33 +61,33 @@ function RegistrarD() {
                     <h2> Información del delito</h2>
                     <form className="w-100" onSubmit={(e) => handleSubmit(e)}>
                         <div className="d-flex flex-column mb-4">
-                            <label className="form-label" htmlFor="Rdelito">Delito</label>
-                            <select className="w-50" aria-label="x" id="Rdelito" onChange={handleChange} name="Rdelito">
+                            <label className="form-label" htmlFor="delDelito">Delito</label>
+                            <select className="w-50" id="delDelito" onChange={handleChange} name="delDelito">
                                 <option value="" >Seleccione Delito</option>
                                 <option value="Homicidio">Homicidio</option>
                                 <option value="Asesinado">Asesinado</option>
                             </select>
-                            {error.Rdelito && <span className="error">{error.Rdelito}</span>}
+                            {error.delDelito && <span className="error">{error.delDelito}</span>}
                         </div>
                         <div className="d-flex flex-column mb-4">
-                            <label className="form-label" htmlFor="Rjuez">Juez</label>
-                            <input type="text" className="w-50" id="Rjuez" name="Rjuez" onChange={handleChange}/>
-                            {error.Rjuez && <span className="error">{error.Rjuez}</span>}
+                            <label className="form-label" htmlFor="delJuez">Juez</label>
+                            <input type="text" className="w-50" id="delJuez" name="delJuez" onChange={handleChange}/>
+                            {error.delJuez && <span className="error">{error.delJuez}</span>}
                         </div>
                         <div className="d-flex flex-column mb-4">
-                            <label className="form-label" htmlFor="fechaDet">Fecha de Detención</label>
-                            <input type="date" className="w-50" id="fechaDet" name="fechaDet" onChange={handleChange}/>
-                            {error.fechaDet && <span className="error">{error.fechaDet}</span>}
+                            <label className="form-label" htmlFor="delFechDet">Fecha de Detención</label>
+                            <input type="date" className="w-50" id="delFechDet" name="delFechDet" onChange={handleChange}/>
+                            {error.delFechDet && <span className="error">{error.delFechDet}</span>}
                         </div>
                         <div className="d-flex flex-column mb-4">
-                            <label className="form-label" htmlFor="fechaIniCon">Fecha de inicio de condena</label>
-                            <input type="date" className="w-50" id="fechaIniCon" name="fechaIniCon" onChange={handleChange}/>
-                            {error.fechaIniCon && <span className="error">{error.fechaIniCon}</span>}
+                            <label className="form-label" htmlFor="delFechIniCondena">Fecha de inicio de condena</label>
+                            <input type="date" className="w-50" id="delFechIniCondena" name="delFechIniCondena" onChange={handleChange}/>
+                            {error.delFechIniCondena && <span className="error">{error.delFechIniCondena}</span>}
                         </div>
                         <div className="d-flex flex-column mb-4">
-                            <label className="form-label" htmlFor="duracion">Duración de Condena</label>
-                            <input type="number" className="w-50" id="duracion" name="duracion" onChange={handleChange}/>
-                            {error.duracion && <span className="error">{error.duracion}</span>}
+                            <label className="form-label" htmlFor="delDuracion">Duración de Condena</label>
+                            <input type="number" className="w-50" id="delDuracion" name="delDuracion" onChange={handleChange}/>
+                            {error.delDuracion && <span className="error">{error.delDuracion}</span>}
                         </div>
                         <div className="d-flex justify-content-end">
                             <button className="btn btn-primary mx-2" type="submit">

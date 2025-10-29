@@ -11,6 +11,8 @@ export const useCartContext = () => useContext(Context);
 
 //Proveedor de datos y funciones
 function ContextProvider({ children }) {
+    //estados para almacenar el objeto delitos
+    const [datosDelito, setDatosDelito] = useState({});
     //variable para almacenar los datos de penitenciaria provenientes de la petición
     const [datosPenitenciaria, setDatosPenitenciaria] = useState([]);
     // almacena los datos buscados, es utilizado en buscarDatos()
@@ -18,7 +20,7 @@ function ContextProvider({ children }) {
     const [buscar, setBuscar] = useState([]);
     //estados para validar formularios
     const [datosForm, setDatosForm] = useState({});
-
+    
 
     //estados para mostrar los errores en el formulario
     const [error, setError] = useState({});
@@ -51,6 +53,10 @@ function ContextProvider({ children }) {
         buscarDatos(ev.target.value);
     }*/
 
+    /*=================================================================================================================================================*/
+    /*=====================================================Funciones Penitenciaria====================================================================*/
+    /*=================================================================================================================================================*/
+
     //funcion para pedir los datos de penitenciaria a la API
     async function obtenerDatoPenitenciaria() {
         // buscar el JSON
@@ -77,10 +83,7 @@ function ContextProvider({ children }) {
                 throw new Error("Error al enviar los datos");
             }
 
-            const datos = await respuesta.json();
-            console.log("datos enviados", datos);
-
-            //actualizamos los valores
+           //actualizamos los valores
             await obtenerDatoPenitenciaria();
             //limpiamos los datos del formulario
             setDatosForm({});
@@ -91,9 +94,53 @@ function ContextProvider({ children }) {
         }
     }
 
-    
+    //Eliminar Penitenciaria
+    async function eliminarPenitenciaria(id){
+        try{
+            const response = await fetch("http://localhost:8080/api/penitenciaria/" + id, {
+                                                                                        method: "DELETE"
+                                                                                    });
+            if(!response.ok){
+                throw new Error("Error al eliminar");
+            }
 
+            //refresco los valores de la tabla
+            await obtenerDatoPenitenciaria();
+        }catch(error){
+            console.log("Error al eliminar un registro", error);
+        }
 
+    }
+
+    //editar penitenciaria
+    async function editarPenitenciaria(id){
+        try{
+            const response = await fetch("http://localhost:8080/api/penitenciaria/" + id,{
+                method:"PUT",
+                headers:{
+                    "content-type":"application/json",
+                    "Access-Control-Allow-Origin": "http://localhost:8080/api/penitenciaria"
+                },
+                body: JSON.stringify(datosForm)
+            })
+
+            if(!response.ok){
+                throw new Error("Error al editar penitenciaria");
+            }
+
+            //actualizamos la tabla penitenciaria
+            await obtenerDatoPenitenciaria();
+            //limpiamos la variable datosForm
+            setDatosForm({});
+
+        }catch(error){
+            console.log("Error al editar una penitenciaria: ", error);
+        }
+    }
+
+    /*=================================================================================================================================================*/
+    /*=====================================================Validacion de formularios====================================================================*/
+    /*=================================================================================================================================================*/
     function validarForm(fecha = null) {
         //Objeto temporal que se va a ir generando a medida de que ocurren errores
         let objeto = {};
@@ -122,7 +169,7 @@ function ContextProvider({ children }) {
         if (fecha) {
             fecha.forEach((e) => {
                 if (datosForm[e]?.trim()) {
-                    if (e === "fechaNac") {
+                    if (e === "intFechaNac") {
                         objeto = validarFechaNac(objeto);
                     } else {
                         objeto = validarFecha(e, objeto);
@@ -139,7 +186,7 @@ function ContextProvider({ children }) {
 
     function inputVacios(tmp) {
         campos.forEach(clave => {
-            if (!datosForm[clave]?.trim()) tmp[clave] = "Debe ingresar un valor";
+            if (!String(datosForm[clave] ?? "").trim()) tmp[clave] = "Debe ingresar un valor";
         });
 
         return tmp;
@@ -176,15 +223,15 @@ function ContextProvider({ children }) {
 
     //funcion para validar fecha de nacimiento
     function validarFechaNac(tmp) {
-        const fecha = datosForm.fechaNac.trim().split("-");
+        const fecha = datosForm.intFechaNac.trim().split("-");
         const [anio, mes, dia] = fecha.map(Number);
 
         if (isNaN(anio) || anio > 2007 || anio < 1950) {
-            tmp.fechaNac = "El año debe estar entre 1950 y 2007";
+            tmp.intFechaNac = "El año debe estar entre 1950 y 2007";
         } else if (isNaN(mes) || mes > 12 || mes < 1) {
-            tmp.fechaNac = "Mes incorrecto"
+            tmp.intFechaNac = "Mes incorrecto"
         } else if (isNaN(dia) || dia > 31 || dia < 1) {
-            tmp.fechaNac = "Día incorrecto"
+            tmp.intFechaNac = "Día incorrecto"
         } else {
             // Validar días correctos según el mes
             const fechaValida = new Date(anio, mes - 1, dia);
@@ -193,7 +240,7 @@ function ContextProvider({ children }) {
                 fechaValida.getMonth() + 1 !== mes ||
                 fechaValida.getDate() !== dia
             ) {
-                tmp.fechaNac = "La fecha no es válida";
+                tmp.intFechaNac = "La fecha no es válida";
             }
         }
 
@@ -241,7 +288,12 @@ function ContextProvider({ children }) {
 
     //paso los datos y funciones a mi Context antes definido en la linea: 4
     return (
-        <Context.Provider value={{ validarForm, setDatosForm, datosForm, error, setCampos, campos, datosPenitenciaria,enviarDatosPenitenciaria}}>
+        <Context.Provider value={{ validarForm, setDatosForm, datosForm, error, setCampos, campos, 
+        datosPenitenciaria,
+        enviarDatosPenitenciaria, 
+        eliminarPenitenciaria,
+        editarPenitenciaria,
+        datosDelito,setDatosDelito}}>
             {children}
         </Context.Provider>
     )
