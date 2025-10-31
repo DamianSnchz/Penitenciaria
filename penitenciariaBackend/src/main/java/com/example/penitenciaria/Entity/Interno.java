@@ -13,43 +13,43 @@ public class Interno {
     private Long legajo;
 
     @Column(name = "intNombre", length = 50, nullable = false)
-    private String nombre;
+    private String intNombre;
 
     @Column(name = "intApellido", length = 50, nullable = false)
-    private String apellido;
+    private String intApellido;
     
-    @Column(name = "intTipo", length = 3, nullable = false)
-    private String tipo;
+    @Column(name = "intTipo", length = 4, nullable = false)
+    private String intTipo;
 
     @Column(name = "intDni", unique = true, nullable = false)
-    private Integer dni;
+    private String intDni;
 
     @Column(name = "intSexo", length = 1, nullable = false)
-    private String sexo;
+    private String intSexo;
 
     @Column(name = "intNacionalidad", length = 30, nullable = false)
-    private String nacionalidad;
+    private String intNacionalidad;
 
     @Column(name = "intAlias", length = 30, nullable = false)
-    private String alias;
+    private String intAlias;
 
     @Column(name = "intFechNac", nullable = false)
-    private LocalDate fechaNacimiento;
+    private LocalDate intFechNac;
 
     @Column(name = "intDptoNac", length = 30, nullable = false)
-    private String departamentoNacimiento;
+    private String intDptoNac;
 
     @Column(name = "intPciaNac", length = 30, nullable = false)
-    private String provinciaNacimiento;
+    private String intPciaNac;
 
     @Column(name = "intDomicilio", length = 30, nullable = false)
-    private String domicilio;
+    private String intDomicilio;
 
     @Column(name = "intEstadoCivil", length = 10, nullable = false)
-    private String estadoCivil;
+    private String intEstadoCivil;
 
     @Column(name = "intProfesion", length = 30, nullable = false)
-    private String profesion;
+    private String intProfesion;
 
     @ManyToOne
     @JoinColumn(name = "idPenitenciaria", nullable = false)
@@ -60,33 +60,33 @@ public class Interno {
     private Delito idDelito;
 
     @Column(name = "intEstado", length = 8, nullable = false)
-    private String estado = "activo";
+    private String intEstado = "activo";
 
     // ===== CONSTRUCTORES =====
     public Interno() {
     }
 
-    public Interno(Long legajo, String nombre, String apellido, String tipo, Integer dni, String sexo, String nacionalidad,
+    public Interno(Long legajo, String nombre, String apellido, String tipo, String dni, String sexo, String nacionalidad,
             String alias, LocalDate fechaNacimiento, String departamentoNacimiento, String provinciaNacimiento,
             String domicilio, String estadoCivil, String profesion, Penitenciaria idPenitenciaria,
             Delito idDelito, String estado) {
         this.legajo = legajo;
-        this.nombre = nombre;
-        this.apellido = apellido;
-        this.tipo = tipo;
-        this.dni = dni;
-        this.sexo = sexo;
-        this.nacionalidad = nacionalidad;
-        this.alias = alias;
-        this.fechaNacimiento = fechaNacimiento;
-        this.departamentoNacimiento = departamentoNacimiento;
-        this.provinciaNacimiento = provinciaNacimiento;
-        this.domicilio = domicilio;
-        this.estadoCivil = estadoCivil;
-        this.profesion = profesion;
+        this.intNombre = nombre;
+        this.intApellido = apellido;
+        this.intTipo = tipo;
+        this.intDni = dni;
+        this.intSexo = sexo;
+        this.intNacionalidad = nacionalidad;
+        this.intAlias = alias;
+        this.intFechNac = fechaNacimiento;
+        this.intDptoNac = departamentoNacimiento;
+        this.intPciaNac = provinciaNacimiento;
+        this.intDomicilio = domicilio;
+        this.intEstadoCivil = estadoCivil;
+        this.intProfesion = profesion;
         this.idPenitenciaria = idPenitenciaria;
         this.idDelito = idDelito;
-        this.estado = estado;
+        this.intEstado = estado;
     }
 
     // ===== GETTERS Y SETTERS =====
@@ -98,109 +98,109 @@ public class Interno {
         this.legajo = legajo;
     }
 
-    public String getNombre() {
-        return nombre;
+    public String getIntNombre() {
+        return intNombre;
     }
 
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setIntNombre(String intNombre) {
+        this.intNombre = intNombre;
     }
     
-    public String getApellido() {
-        return apellido;
+    public String getIntApellido() {
+        return intApellido;
     }
 
-    public void setApellido(String apellido) {
-        this.apellido = apellido;
+    public void setIntApellido(String intApellido) {
+        this.intApellido = intApellido;
     }
 
 
-    public String getTipo() {
-        return tipo;
+    public String getIntTipo() {
+        return intTipo;
     }
 
-    public void setTipo(String tipo) {
-        this.tipo = tipo;
+    public void setIntTipo(String intTipo) {
+        this.intTipo = intTipo;
     }
 
-    public Integer getDni() {
-        return dni;
+    public String getIntDni() {
+        return intDni;
     }
 
-    public void setDni(Integer dni) {
-        this.dni = dni;
+    public void setIntDni(String intDni) {
+        this.intDni = intDni;
     }
 
-    public String getSexo() {
-        return sexo;
+    public String getIntSexo() {
+        return intSexo;
     }
 
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
+    public void setIntSexo(String intSexo) {
+        this.intSexo = intSexo;
     }
 
-    public String getNacionalidad() {
-        return nacionalidad;
+    public String getIntNacionalidad() {
+        return intNacionalidad;
     }
 
-    public void setNacionalidad(String nacionalidad) {
-        this.nacionalidad = nacionalidad;
+    public void setIntNacionalidad(String intNacionalidad) {
+        this.intNacionalidad = intNacionalidad;
     }
 
-    public String getAlias() {
-        return alias;
+    public String getIntAlias() {
+        return intAlias;
     }
 
-    public void setAlias(String alias) {
-        this.alias = alias;
+    public void setIntAlias(String intAlias) {
+        this.intAlias = intAlias;
     }
 
-    public LocalDate getFechaNacimiento() {
-        return fechaNacimiento;
+    public LocalDate getIntFechNac() {
+        return intFechNac;
     }
 
-    public void setFechaNacimiento(LocalDate fechaNacimiento) {
-        this.fechaNacimiento = fechaNacimiento;
+    public void setIntFechNac(LocalDate intFechNac) {
+        this.intFechNac = intFechNac;
     }
 
-    public String getDepartamentoNacimiento() {
-        return departamentoNacimiento;
+    public String getIntDptoNac() {
+        return intDptoNac;
     }
 
-    public void setDepartamentoNacimiento(String departamentoNacimiento) {
-        this.departamentoNacimiento = departamentoNacimiento;
+    public void setIntDptoNac(String intDptoNac) {
+        this.intDptoNac = intDptoNac;
     }
 
-    public String getProvinciaNacimiento() {
-        return provinciaNacimiento;
+    public String getIntPciaNac() {
+        return intPciaNac;
     }
 
-    public void setProvinciaNacimiento(String provinciaNacimiento) {
-        this.provinciaNacimiento = provinciaNacimiento;
+    public void setIntPciaNac(String intPciaNac) {
+        this.intPciaNac = intPciaNac;
     }
 
-    public String getDomicilio() {
-        return domicilio;
+    public String getIntDomicilio() {
+        return intDomicilio;
     }
 
-    public void setDomicilio(String domicilio) {
-        this.domicilio = domicilio;
+    public void setIntDomicilio(String intDomicilio) {
+        this.intDomicilio = intDomicilio;
     }
 
-    public String getEstadoCivil() {
-        return estadoCivil;
+    public String getIntEstadoCivil() {
+        return intEstadoCivil;
     }
 
-    public void setEstadoCivil(String estadoCivil) {
-        this.estadoCivil = estadoCivil;
+    public void setIntEstadoCivil(String intEstadoCivil) {
+        this.intEstadoCivil = intEstadoCivil;
     }
 
-    public String getProfesion() {
-        return profesion;
+    public String getIntProfesion() {
+        return intProfesion;
     }
 
-    public void setProfesion(String profesion) {
-        this.profesion = profesion;
+    public void setIntProfesion(String intProfesion) {
+        this.intProfesion = intProfesion;
     }
 
     public Penitenciaria getIdPenitenciaria() {
@@ -219,11 +219,11 @@ public class Interno {
         this.idDelito = idDelito;
     }
 
-    public String getEstado() {
-        return estado;
+    public String getIntEstado() {
+        return intEstado;
     }
 
-    public void setEstado(String estado) {
-        this.estado = estado;
+    public void setIntEstado(String intEstado) {
+        this.intEstado = intEstado;
     }
 }

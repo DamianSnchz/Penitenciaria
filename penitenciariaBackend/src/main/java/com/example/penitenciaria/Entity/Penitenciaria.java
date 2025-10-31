@@ -14,7 +14,7 @@ public class Penitenciaria {
     @Column(name = "penNom", nullable = false, unique = true, length = 50)
     private String penNom;
 
-    @Column(name = "penDireccion", nullable = false, length = 50)
+    @Column(name = "penDireccion", nullable = false, unique = true ,length = 50)
     private String penDireccion;
 
     @Column(name = "penCapacidad", nullable = false)
@@ -22,6 +22,9 @@ public class Penitenciaria {
 
     @Column(name = "penTipo", nullable = false, length = 7)
     private String penTipo;
+    
+    @Column(name = "penEstado", nullable = false, length = 8)
+    private String penEstado = "activo";
 
     // Getters y Setters
 
@@ -79,5 +82,19 @@ public class Penitenciaria {
     }
 
     // toString(), equals() y hashCode() si lo necesitás
+
+    /**
+     * @return the penEstado
+     */
+    public String getPenEstado() {
+        return penEstado;
+    }
+
+    /**
+     * @param penEstado the penEstado to set
+     */
+    public void setPenEstado(String penEstado) {
+        this.penEstado = penEstado;
+    }
 }
 

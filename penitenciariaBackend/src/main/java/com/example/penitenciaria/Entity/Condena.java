@@ -1,78 +1,127 @@
 package com.example.penitenciaria.Entity;
 
 import jakarta.persistence.*;
-import java.time.LocalDate;
+import java.util.Date;
 
 @Entity
 @Table(name = "condenas")
 public class Condena {
 
     @Id
-    @Column(name = "idCondena")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "idCondena")
     private Long idCondena;
 
-    @ManyToOne
+    // 🔗 FK hacia Delito
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "idDelito", nullable = false)
-    private Delito delito;
+    private Delito idDelito;
 
-    @ManyToOne
+    // 🔗 FK hacia Interno
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "legajo", nullable = false)
-    private Interno interno;
+    private Interno legajo;
 
-    @Column(name = "duracion", nullable = false)
-    private Integer duracion = 0;
+    @Column(name = "conDuracion", columnDefinition = "INT DEFAULT 0")
+    private Integer conDuracion = 0;
 
-    @Column(name = "fechaFinCondena")
-    private LocalDate fechaFinCondena;
+    @Temporal(TemporalType.DATE)
+    @Column(name = "conFechFinCon")
+    private Date conFechFinCon;
 
-    @Column(name = "motRedPena", length = 200)
-    private String motivoReduccionPena;
+    @Column(name = "conMotRedPena", length = 200)
+    private String conMotRedPena;
 
-    @Column(name = "tiempoRedCond")
-    private Long tiempoReduccionCond;
+    @Column(name = "conTiempoRedCond")
+    private Long conTiempoRedCond;
 
-    @Column(name = "estado", length = 8, nullable = false)
-    private String estado = "activo";
+    @Column(name = "conEstado", length = 8, nullable = false)
+    private String conEstado = "activo";
 
-    // ===== CONSTRUCTORES =====
-    public Condena() {}
+    @Temporal(TemporalType.DATE)
+    @Column(name = "conFechIniCon")
+    private Date conFechIniCon;
 
-    public Condena(Long idCondena, Delito delito, Interno interno, Integer duracion,
-                   LocalDate fechaFinCondena, String motivoReduccionPena,
-                   Long tiempoReduccionCond, String estado) {
-        this.idCondena = idCondena;
-        this.delito = delito;
-        this.interno = interno;
-        this.duracion = duracion;
-        this.fechaFinCondena = fechaFinCondena;
-        this.motivoReduccionPena = motivoReduccionPena;
-        this.tiempoReduccionCond = tiempoReduccionCond;
-        this.estado = estado;
+    // 🔸 Constructores
+    public Condena() {
     }
 
-    // ===== GETTERS Y SETTERS =====
-    public Long getIdCondena() { return idCondena; }
-    public void setIdCondena(Long idCondena) { this.idCondena = idCondena; }
+    public Condena(Long idCondena, Delito delito, Interno interno) {
+        this.idCondena = idCondena;
+        this.idDelito = delito;
+        this.legajo = interno;
+    }
 
-    public Delito getDelito() { return delito; }
-    public void setDelito(Delito delito) { this.delito = delito; }
+    // 🔸 Getters y setters
+    public Long getIdCondena() {
+        return idCondena;
+    }
 
-    public Interno getInterno() { return interno; }
-    public void setInterno(Interno interno) { this.interno = interno; }
+    public void setIdCondena(Long idCondena) {
+        this.idCondena = idCondena;
+    }
 
-    public Integer getDuracion() { return duracion; }
-    public void setDuracion(Integer duracion) { this.duracion = duracion; }
+    public Delito getIdDelito() {
+        return idDelito;
+    }
 
-    public LocalDate getFechaFinCondena() { return fechaFinCondena; }
-    public void setFechaFinCondena(LocalDate fechaFinCondena) { this.fechaFinCondena = fechaFinCondena; }
+    public void setIdDelito(Delito idDelito) {
+        this.idDelito = idDelito;
+    }
 
-    public String getMotivoReduccionPena() { return motivoReduccionPena; }
-    public void setMotivoReduccionPena(String motivoReduccionPena) { this.motivoReduccionPena = motivoReduccionPena; }
+    public Interno getLegajo() {
+        return legajo;
+    }
 
-    public Long getTiempoReduccionCond() { return tiempoReduccionCond; }
-    public void setTiempoReduccionCond(Long tiempoReduccionCond) { this.tiempoReduccionCond = tiempoReduccionCond; }
+    public void setLegajo(Interno legajo) {
+        this.legajo = legajo;
+    }
 
-    public String getEstado() { return estado; }
-    public void setEstado(String estado) { this.estado = estado; }
+    public Integer getConDuracion() {
+        return conDuracion;
+    }
+
+    public void setConDuracion(Integer conDuracion) {
+        this.conDuracion = conDuracion;
+    }
+
+    public Date getConFechFinCon() {
+        return conFechFinCon;
+    }
+
+    public void setConFechFinCon(Date conFechFinCon) {
+        this.conFechFinCon = conFechFinCon;
+    }
+
+    public String getConMotRedPena() {
+        return conMotRedPena;
+    }
+
+    public void setConMotRedPena(String conMotRedPena) {
+        this.conMotRedPena = conMotRedPena;
+    }
+
+    public Long getConTiempoRedCond() {
+        return conTiempoRedCond;
+    }
+
+    public void setConTiempoRedCond(Long conTiempoRedCond) {
+        this.conTiempoRedCond = conTiempoRedCond;
+    }
+
+    public String getConEstado() {
+        return conEstado;
+    }
+
+    public void setConEstado(String conEstado) {
+        this.conEstado = conEstado;
+    }
+
+    public Date getConFechIniCon() {
+        return conFechIniCon;
+    }
+
+    public void setConFechIniCon(Date conFechIniCon) {
+        this.conFechIniCon = conFechIniCon;
+    }
 }

@@ -1,11 +1,14 @@
+import { InterfacePenitenciaria } from "./interfacePenitenciaria";
+import {InterfaceDelito} from "./interfaceDelito";
+
 export interface InterfaceInterno{
     legajo: number;
-    intDni:number;
+    intDni:String;
     intFechNac: Date;
     intSexo:String;
     intTipo:String;
-    idDelito:number;
-    idPenitenciaria:number;
+    idDelito:InterfaceDelito;
+    idPenitenciaria:InterfacePenitenciaria;
     intEstado:String;
     intEstadoCivil:String;
     intAlias:String;

@@ -105,6 +105,7 @@ function Penitenciaria() {
                     </thead>
                     <tbody>
                         {datosPenitenciaria.map((e: InterfacePenitenciaria) => (
+                            e.penEstado === "activo" ?
                             <tr key={e.idPenitenciaria}>
                                 <th scope="row">{e.idPenitenciaria}</th>
                                 <td>{e.penNom}</td>
@@ -120,7 +121,7 @@ function Penitenciaria() {
                                     </button>
                                 </td>
                             </tr>
-                        ))}
+                        : ""))}
                     </tbody>
                 </table>
                 <br />

@@ -29,7 +29,12 @@ public class ServicePenitenciaria {
     }
 
     public void eliminar(Long id){
-        p.deleteById(id);
+        Penitenciaria penitenciaria = p.findById(id).orElseThrow(()-> new RuntimeException("Error al encontrar la penitenciaria: " + id));
+        
+        if(penitenciaria != null){
+            penitenciaria.setPenEstado("inactivo");
+            p.save(penitenciaria);
+        }
     }
         
 }

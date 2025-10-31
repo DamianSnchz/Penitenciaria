@@ -1,7 +1,19 @@
+import { useCartContext } from "../contextProvider/context"
+//importamos interface delito
+import {InterfaceDelito} from "../interface/interfaceDelito"
 
-import { Link } from "react-router-dom";
+import { useNavigate} from "react-router-dom";
 
 function Delitos() {
+    //uso del context
+    const {datosDelito, setObjetoDelito, setDatosForm} = useCartContext();
+
+    const navegar = useNavigate();
+
+    function irRegistrarDelito(){
+        navegar("/registrarDelito");
+    }
+
     return (
         <div className="container-component">
             <article>
@@ -32,42 +44,22 @@ function Delitos() {
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Tiburcio</td>
-                            <td>Olivera</td>
-                            <td>28/10/2000</td>
-                            <td>28/10/2000</td>
-                            <td>6</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Tiburcio</td>
-                            <td>Olivera</td>
-                            <td>28/10/2000</td>
-                            <td>28/10/2000</td>
-                            <td>6</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Tiburcio</td>
-                            <td>Olivera</td>
-                            <td>28/10/2000</td>
-                            <td>28/10/2000</td>
-                            <td>6</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
+                        {datosDelito.map((d: InterfaceDelito)=>(
+                            d.delEstado === "activo" ?
+                                 <tr key={d.idDelito}>
+                                <th scope="row">{d.idDelito}</th>
+                                <td>{d.delDelito}</td>
+                                <td>{d.delJuez}</td>
+                                <td>{String(d.delFechDet)}</td>
+                                <td>{String(d.delFechIniCondena)}</td>
+                                <td>{d.delDuracion}</td>
+                                <td>
+                                    <button className="btn btn-primary btn-sm" onClick={()=> {setDatosForm(d); irRegistrarDelito()}} >
+                                        Editar
+                                    </button>
+                                </td>
+                            </tr>
+                        : ""))}
                     </tbody>
                 </table>
                 <br />

@@ -1,27 +1,27 @@
-//importar css
-import { Link } from "react-router-dom";
 import "../css/internos.css"
 //importar uselocation para poder recibir datos por parametros
-import { useLocation } from "react-router-dom";
+import { Link} from "react-router-dom";
 //importar mi proveedor ContextProvider
 import { useCartContext } from "../contextProvider/context.jsx";
 import { useEffect } from "react";
+//importar interface Penitenciaria para usarlo en el select
+import {InterfacePenitenciaria} from "../interface/interfacePenitenciaria.js"
+import  {InterfaceInterno} from "../interface/interfaceInternos.ts";
+
 
 
 function Internos() {
-	//variable para el recibimiento de parametros
-	const location = useLocation();
 	//función compartida del proveedor de datos
-	const { validarForm, datosForm, setDatosForm, error, setCampos, datosDelito, setDatosDelito} = useCartContext();
+	const { validarForm, datosForm, setDatosForm, error, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar} = useCartContext();
 
 
 	
 
 	useEffect(() => {
 		//paso los campos de cada inputs para poder hacer las validaciones
-		setCampos(["intApellido", "intNombre", "intSexo", "intAlias", "intFechaNac", "intEstadoCivil", "intDptoNac",
-			"intProvinciaNac", "intNacionalidad", "intProfesion", "intDireccion", "intDni", "intTipo","delito","juez", 
-			"idPenitenciaria","fechaIngreso"]);
+		setCampos(["intApellido", "intNombre", "intSexo", "intAlias", "intFechNac", "intEstadoCivil", "intDptoNac",
+			"intPciaNac", "intNacionalidad", "intProfesion", "intDireccion", "intDni", "intTipo","delito","juez", 
+			"idPenitenciaria","fechaIngreso","intDomicilio"]);
 
 		return() => {
 			//limpio "campos" para que al ingresar al componente "delitos" pueda cargar los ID de sus nuevos inputs
@@ -30,22 +30,44 @@ function Internos() {
 		}
 	}, [])//se ejecuta solo una vez cuando se realiza el montaje y desmontaje
 
+
 	
 	//función para asignar valor a mi "datosForm" proveniente de mi proveedor de datos
 	function handleChange(e: any) {
-		//El operador spread "dispersar" (...) copia todas las propiedades del objeto datosForm en un nuevo objeto
-		//Por medio de los corchetes indico que a e.target.name lo utilice como clave de objeto 
-		setDatosForm({ ...datosForm, [e.target.name]: e.target.value });
+		
+		//caso especial a la hora de utilizar el select (para poder capturar el objeto seleccionado)
+		if(e.target.name === "idPenitenciaria"){
+			const id = Number(e.target.value);
+			//busco el objeto en "datosPenitenciaria" que tiene todos los objetos de la peticion
+			const penitenciaria = datosPenitenciaria.find((p: InterfacePenitenciaria) => p.idPenitenciaria === id) || null;
+			//Agrego el id a datosForm para mantener las validaciones de los inputs
+			setDatosForm({...datosForm, idPenitenciaria: id});
+			//agrego el subObjeto penitenciaria al objeto internos
+			setObjetoInterno({...objetoInterno, idPenitenciaria: {...penitenciaria}})
+		}else{
+			//El operador spread "dispersar" (...) copia todas las propiedades del objeto datosForm en un nuevo objeto
+			//Por medio de los corchetes indico que a e.target.name lo utilice como clave de objeto 
+			setDatosForm({ ...datosForm, [e.target.name]: e.target.value });
+			setObjetoInterno({...objetoInterno, [e.target.name]: e.target.value});
+		}
+
+
+		
 	}
 
 	//función que se ejecuta cuando se envía el formulario
 	function handledSubmit(e: React.FormEvent) {
 		e.preventDefault();
 		//pasamos las fechas a validar
-		const valor = validarForm(["intFechaNac","fechaIngreso"]);
+		const id = datosForm.legajo ?? 0;
+		const valor = validarForm(["intFechNac","fechaIngreso"]);
+		
 		if(valor){
-			//si es true agrego un SubObjeto a los datos
-			setDatosForm({...datosForm, idDelito:{...datosDelito}});
+			if(id !== 0){
+				editarDatoInterno(id);
+			}else{
+				enviarDatosInternos();
+			}
 		}
 		return valor;
 	}
@@ -61,11 +83,12 @@ function Internos() {
 							Registrar, modificar y gestionar datos personales de internos, incluyendo información de ingreso.
 						</h4>
 					</div>
-					<Link to={"/registrarDelito"} className="btn btn-outline-secondary btn-sm ">Registrar Delito</Link>
+					<Link to={"/registrarDelito"} className={`btn btn-outline-secondary btn-sm ${datosForm.legajo ? "disabled" : ""}`}>Registrar Delito</Link>
 				</div>
 				<div className="form-container ">
 					<h2> Información del Inteno</h2>
 					<form className="w-100" id="form-internos" onSubmit={(e) => { handledSubmit(e) }}>
+						<input hidden id="legajo" name="legajo" value={datosForm.legajo ?? 0} readOnly/>
 						<div className="input-container">
 							<div>
 								<label className="form-label" htmlFor="intApellido">Apellido</label>
@@ -81,8 +104,8 @@ function Internos() {
 						<div className="input-container">
 							<div>
 								<label className="form-label" htmlFor="intSexo">Genero</label>
-								<select aria-label="x" name="intSexo" id="intSexo" onChange={handleChange} value={datosForm?.intgenero ?? ""}>
-									<option value="" >Seleccione género</option>
+								<select aria-label="x" name="intSexo" id="intSexo" onChange={handleChange} value={datosForm?.intSexo ?? ""}>
+									<option value="">Seleccione género</option>
 									<option value="M">Masculino</option>
 									<option value="F">Femenino</option>
 								</select>
@@ -97,8 +120,8 @@ function Internos() {
 						<div className="input-container">
 							<div>
 								<label className="form-label" >Fecha nacimiento</label>
-								<input type="date" name="intFechaNac" id="intFechaNac" onChange={handleChange} value={datosForm?.intFechaNac ?? ""}/>
-								{error.intFechaNac && <span className="error" >{error.intFechaNac}</span>}
+								<input type="date" name="intFechNac" id="intFechNac" onChange={handleChange} value={datosForm?.intFechNac ?? ""}/>
+								{error.intFechNac && <span className="error" >{error.intFechNac}</span>}
 							</div>
 							<div>
 								<label className="form-label" >Estado Civil</label>
@@ -113,9 +136,9 @@ function Internos() {
 								{error.intDptoNac && <span className="error" >{error.intDptoNac}</span>}
 							</div>
 							<div>
-								<label className="form-label" htmlFor="intProvinciaNac">Provincia de Nacimiento</label>
-								<input className="" type="text" name="intProvinciaNac" id="intProvinciaNac" onChange={handleChange} value={datosForm?.intProvinciaNac ?? ""}/>
-								{error.intProvinciaNac && <span className="error" >{error.intProvinciaNac}</span>}
+								<label className="form-label" htmlFor="intPciaNac">Provincia de Nacimiento</label>
+								<input className="" type="text" name="intPciaNac" id="intPciaNac" onChange={handleChange} value={datosForm?.intPciaNac ?? ""}/>
+								{error.intPciaNac && <span className="error" >{error.intPciaNac}</span>}
 							</div>
 						</div>
 						<div className="input-container">
@@ -140,10 +163,10 @@ function Internos() {
 						<div className="input-container gap-4">
 							<div>
 								<label className="form-label me-5" htmlFor="intTipo">Tipo de Documento</label>
-								<select aria-label="intTipo" name="intTipo" id="intTipo" onChange={handleChange}>
-									<option value={datosForm?.inttipo ?? ""}>Tipo</option>
+								<select aria-label="intTipo" name="intTipo" id="intTipo" onChange={handleChange} value={datosForm?.intTipo ?? ""}>
+									<option value="">Tipo</option>
 									<option value="DNI">DNI</option>
-									<option value="CUIT">CUIT</option>
+									<option value="CUIL">CUIL</option>
 								</select>
 								{error.intTipo && <span className="error" >{error.intTipo}</span>}
 							</div>
@@ -151,6 +174,13 @@ function Internos() {
 								<label className="form-label" htmlFor="intDni" >Número de documento</label>
 								<input className="" type="text" name="intDni" id="intDni" onChange={handleChange} value={datosForm?.intDni ?? ""}/>
 								{error.intDni && <span className="error" >{error.intDni}</span>}
+							</div>
+						</div>
+						<div className="input-container">
+							<div>
+								<label className="form-label" >Domicilio</label>
+								<input className="" type="text" name="intDomicilio" id="intDomicilio" onChange={handleChange} value={datosForm?.intDomicilio ?? ""}/>
+								{error.intDomicilio && <span className="error" >{error.intDomicilio}</span>}
 							</div>
 						</div>
 						<br />
@@ -176,10 +206,11 @@ function Internos() {
 						<div className="input-container gap-4">
 							<div>
 								<label className="form-label" htmlFor="idPenitenciaria">Instalación de ingreso</label>
-								<select aria-label="SeleccionPenitenciaria" name="idPenitenciaria" id="idPenitenciaria" value={datosForm?.idPenitenciaria ?? ""} onChange={handleChange}>
+								<select aria-label="SeleccionPenitenciaria" name="idPenitenciaria" id="idPenitenciaria" value={datosForm?.idPenitenciaria  ?? ""} onChange={handleChange}>
 									<option value="">Seleccione Penitenciaria</option>
-									<option value="1">prueba1</option>
-									<option value="2">prueba2</option>
+									{datosPenitenciaria.map((e: InterfacePenitenciaria) => (
+										<option key={e.idPenitenciaria} value={e.idPenitenciaria}>{e.penNom}</option>
+									))}
 								</select>
 								{error.idPenitenciaria && <span className="error" >Debe seleccionar una penitenciaria</span>}
 							</div>
@@ -193,7 +224,7 @@ function Internos() {
 							<button className="btn btn-primary mx-2" type="submit">
 								Guardar
 							</button>
-							<button className="btn btn-outline-secondary" type="button" onClick={()=>{setDatosForm({})}} >
+							<button className="btn btn-outline-secondary" type="button" onClick={()=>{setDatosForm({}); setObjetoInterno({}) }} >
 								Cancelar
 							</button>
 						</div>
@@ -212,53 +243,34 @@ function Internos() {
 							<th scope="col">Legajo</th>
 							<th scope="col">Nombre</th>
 							<th scope="col">Apellido</th>
-							<th scope="col">DNI</th>
-							<th scope="col">Fecha de Ingreso</th>
+							<th scope="col">DNI/CUIL</th>
+							<th scope="col">Fecha de Nacimiento</th>
 							<th scope="col">Delito</th>
 							<th scope="col">Penitenciaria</th>
-							<th scope="col">Accionees</th>
+							<th scope="col">Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
-						<tr>
-							<th scope="row">23223</th>
-							<td>Tiburcio</td>
-							<td>Olivera</td>
-							<td>42898788</td>
-							<td>28/10/2000</td>
-							<td>Asesinato</td>
-							<td>Penitenciaria</td>
-							<td><button className="btn btn-outline-secondary btn-sm">
-								Editar
-							</button>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">23223</th>
-							<td>Tiburcio</td>
-							<td>Olivera</td>
-							<td>42898788</td>
-							<td>28/10/2000</td>
-							<td>Asesinato</td>
-							<td>Penitenciaria</td>
-							<td><button className="btn btn-outline-secondary btn-sm">
-								Editar
-							</button>
-							</td>
-						</tr>
-						<tr>
-							<th scope="row">23223</th>
-							<td>Tiburcio</td>
-							<td>Olivera</td>
-							<td>42898788</td>
-							<td>28/10/2000</td>
-							<td>Asesinato</td>
-							<td>Penitenciaria</td>
-							<td><button className="btn btn-outline-secondary btn-sm">
-								Editar
-							</button>
-							</td>
-						</tr>
+						{datosInterno.map((i: InterfaceInterno) => (
+							i.intEstado === "activo" ?
+							<tr key={i.legajo}>
+								<th scope="row">{i.legajo}</th>
+								<td>{i.intNombre}</td>
+								<td>{i.intApellido}</td>
+								<td>{i.intDni}</td>
+								<td>{String(i.intFechNac)}</td>
+								<td>{i.idDelito.delDelito}</td>
+								<td>{i.idPenitenciaria.penNom}</td>
+								<td>
+									<button className="btn btn-primary btn-sm me-2" onClick={()=> valoresEditar(i)}>
+                                        Editar
+                                    </button>
+                                    <button className="btn btn-danger btn-sm" onClick={()=> eliminarInterno(i.legajo)}>
+                                        Eliminar
+                                    </button>
+								</td>
+							</tr> : "" 
+						))}
 					</tbody>
 				</table>
 				<br />

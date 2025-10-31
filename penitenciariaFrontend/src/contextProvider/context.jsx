@@ -12,9 +12,15 @@ export const useCartContext = () => useContext(Context);
 //Proveedor de datos y funciones
 function ContextProvider({ children }) {
     //estados para almacenar el objeto delitos
-    const [datosDelito, setDatosDelito] = useState({});
-    //variable para almacenar los datos de penitenciaria provenientes de la petición
+    const [objetoDelito, setObjetoDelito] = useState({});
+    //estado para almacenar el objeto interno
+    const [objetoInterno, setObjetoInterno] = useState({});
+    //variable para almacenar los datos de penitenciaria provenientes de la petición GET
     const [datosPenitenciaria, setDatosPenitenciaria] = useState([]);
+    //variable para almacenar los datos de internos provenientes de la petición GET
+    const [datosInterno, setDatosInterno] = useState([]);
+    //variable para almacenar los datos de delitos provenientes de la petición GET
+    const [datosDelito, setDatosDelito] = useState([]);
     // almacena los datos buscados, es utilizado en buscarDatos()
     //luego su valor pasara a setDatos() para ser mostrados
     const [buscar, setBuscar] = useState([]);
@@ -29,8 +35,10 @@ function ContextProvider({ children }) {
     // ------------------------------------------------------------------------------------
     // funciones:
     useEffect(() => {
-        // ejecutar funcion de obtencion de datos
-        obtenerDatoPenitenciaria();
+        // ejecutar funcion de obtencion de datos al inicio del programa
+        obtenerDatosPenitenciaria();
+        obtenerDatosInterno();
+        obtenerDatosDelito();
     }, [])
 
     // funcion de busqueda filtrado
@@ -58,7 +66,7 @@ function ContextProvider({ children }) {
     /*=================================================================================================================================================*/
 
     //funcion para pedir los datos de penitenciaria a la API
-    async function obtenerDatoPenitenciaria() {
+    async function obtenerDatosPenitenciaria() {
         // buscar el JSON
         const response = await fetch('http://localhost:8080/api/penitenciaria');
         // convertir la peticion en objeto
@@ -84,7 +92,7 @@ function ContextProvider({ children }) {
             }
 
            //actualizamos los valores
-            await obtenerDatoPenitenciaria();
+            await obtenerDatosPenitenciaria();
             //limpiamos los datos del formulario
             setDatosForm({});
             //limpiamos el objeto error
@@ -105,7 +113,7 @@ function ContextProvider({ children }) {
             }
 
             //refresco los valores de la tabla
-            await obtenerDatoPenitenciaria();
+            await obtenerDatosPenitenciaria();
         }catch(error){
             console.log("Error al eliminar un registro", error);
         }
@@ -129,12 +137,179 @@ function ContextProvider({ children }) {
             }
 
             //actualizamos la tabla penitenciaria
-            await obtenerDatoPenitenciaria();
+            await obtenerDatosPenitenciaria();
             //limpiamos la variable datosForm
             setDatosForm({});
 
         }catch(error){
             console.log("Error al editar una penitenciaria: ", error);
+        }
+    }
+
+    /*=================================================================================================================================================*/
+    /*=====================================================Funciones Internos====================================================================*/
+    /*=================================================================================================================================================*/
+    async function enviarDatosInternos() {
+        try{
+            const response = await fetch("http://localhost:8080/api/interno",{
+                                                                                method:"POST",
+                                                                                headers:{
+                                                                                    "content-type": "application/json"
+                                                                                },
+                                                                                body: JSON.stringify(objetoInterno)
+                                                                            })
+            if(!response.ok){
+                throw new Error("Error al enviar datos a internos");
+            }
+
+            //actualizo los valores de los internos
+            obtenerDatosInterno();
+            //limpiamos los datos del formulario
+            setDatosForm({});
+            //limpiamos el objeto de errores
+            setError({});
+        }catch(error){
+            console.log("Error de envio: ", error);
+        }
+    }
+
+    async function obtenerDatosInterno(){
+        try{
+            const response = await fetch('http://localhost:8080/api/interno');
+            if(!response.ok){
+                throw new Error("Error al recibir datos de internos");
+            }
+
+            //convierno la respuesta en objeto json
+            const objeto = await response.json();
+            //almaceno los datos
+            setDatosInterno(objeto);
+
+        }catch(error){
+            console.log("Error: ", error);
+        }
+    }
+
+    async function editarDatoInterno(id) {
+        try{
+            const response = await fetch("http://localhost:8080/api/interno/"+id, {
+                                                                                method:"PUT",
+                                                                                headers:{
+                                                                                    "content-type":"application/json"
+                                                                                },
+                                                                                body: JSON.stringify(objetoInterno)
+                                                                            })
+            if(!response.ok){
+                throw new Error("Error al editar un interno");
+            }
+            //actualizamos los datos
+            await obtenerDatosInterno();
+            //limpiamos los datos
+            setDatosForm({});
+            //limpiamos los errores
+            setError({});
+        }catch(error){
+            console.log("Error: ", error);
+        }
+
+    }
+
+    async function eliminarInterno(id){
+        try{
+            const response = await fetch("http://localhost:8080/api/interno/" + id, {
+                                                                            method:"DELETE",
+                                                                            headers:{
+                                                                                "content-type":"application/json"
+                                                                            }
+                                                                        })
+            if(!response.ok){
+                throw new Error("Error al eliminar interno");
+            }
+            //actualizamos los datos
+            await obtenerDatosInterno();  
+        }catch(error){
+            console.log("Error: ", error);
+        }
+    }
+
+    //funcion para separar los datos antes de editar.
+    function valoresEditar(obj){
+        setObjetoInterno(obj);
+
+        // creamos un objeto temporal
+        const nuevoForm = {};
+
+        Object.entries(obj).forEach(([key, value]) => {
+            if (key === "idDelito") {
+                nuevoForm.delito = value.delDelito;
+                nuevoForm.juez = value.delJuez;
+            } else if (key === "idPenitenciaria") {
+                nuevoForm.idPenitenciaria = value.idPenitenciaria;
+            } else {
+                nuevoForm[key] = value;
+            }
+        });
+
+        // actualizamos el form una sola vez al final
+        setDatosForm(nuevoForm);
+    }
+
+    /*=================================================================================================================================================*/
+    /*=====================================================Funciones Delitos====================================================================*/
+    /*=================================================================================================================================================*/
+    async function obtenerDatosDelito() {
+        try{
+            const response = await fetch("http://localhost:8080/api/delito");
+            if(!response.ok){
+                throw new Error("Error al obtener datos de delitos");
+            }
+            //convertimos la respuesta en objeto
+            const obj = await response.json();
+            setDatosDelito(obj);
+        }catch(error){
+            alert("Error:" , error);
+        }
+    }
+
+    async function editarDatosDelito(id) {
+        try{
+            const response = await fetch("http://localhost:8080/api/delito/" + id, {
+                                                                                    method: "PUT",
+                                                                                    headers:{
+                                                                                        "content-type":"application/json"
+                                                                                    },
+                                                                                    body: JSON.stringify(objetoDelito)
+                                                                                })
+            if(!response.ok){
+                throw new Error("Error al editar delito");
+            }
+            //limpiamos el estado de datosForm
+            setDatosForm({});
+            //limpiamos el estado de errores
+            setError({});
+            //actualizamos los datos
+            await obtenerDatosDelito();
+
+        }catch(error){
+            alert("Error: ", error);
+        }
+    }
+
+    async function eliminarDelito(id){
+        try{
+            const response = await fetch("http://localhost:8080/api/delito/" + id,{
+                                                                                    method:"DELETE",
+                                                                                    headers:{
+                                                                                        "content-type":"application/json"
+                                                                                    }
+                                                                                })
+            if(!response.ok){
+                throw new Error("Error al eliminar un delito");
+            }
+            //actualizamos los datos de delitos
+            await obtenerDatosDelito();
+        }catch(error){
+            alert("Error: ", error)
         }
     }
 
@@ -153,11 +328,11 @@ function ContextProvider({ children }) {
         }
 
         //si existe la clave "DNI" ingresara al if para realizar la validaciòn
-        if (datosForm.DNI?.trim()) {
+        if (datosForm.intDni?.trim()) {
             //variable para verificar si existe un campo "tipo" en el objeto 
             //si la clave "tipo" no existe solo se asigna una cadena vacia (con el fin de que el programa no se rompa)
-            const tipo = datosForm.tipo?.trim() || "";
-            if (tipo === "CUIT") {
+            const tipo = datosForm.intTipo?.trim() || "";
+            if (tipo === "CUIL") {
                 objeto = validarCuil(objeto);
             } else {
                 objeto = validarDNI(objeto);
@@ -169,7 +344,7 @@ function ContextProvider({ children }) {
         if (fecha) {
             fecha.forEach((e) => {
                 if (datosForm[e]?.trim()) {
-                    if (e === "intFechaNac") {
+                    if (e === "intFechNac") {
                         objeto = validarFechaNac(objeto);
                     } else {
                         objeto = validarFecha(e, objeto);
@@ -194,26 +369,41 @@ function ContextProvider({ children }) {
 
     //funcion para validar DNI
     function validarDNI(tmp) {
-        const dni = datosForm.DNI?.trim();
+        const dni = datosForm.intDni?.trim();
         const exp = /^[0-9]{8}$/;
 
         if (!exp.test(dni)) {
-            tmp.DNI = "El DNI debe contener 8 digitos númericos";
+            tmp.intDni = "El DNI debe contener 8 digitos númericos";
+        }else{
+            datosInterno.map((element) => {
+                if(element.intDni === dni){
+                    tmp.intDni = "El DNI ya existe en la BD"
+                }
+            });
         }
+
+        
+        
 
         return tmp;
     }
 
     //funcion para validar cuil
     function validarCuil(tmp) {
-        const cuil = datosForm.DNI?.trim();
+        const cuil = datosForm.intDni?.trim();
         const exp = /^[0-9-]{2}-[0-9]{8}-[0-9]{1}$/;
         if (!exp.test(cuil)) {
-            tmp.DNI = "CUIL incorrecto";
+            tmp.intDni = "CUIL incorrecto";
         } else {
             const [prefix, number, suffix] = cuil.split("-").map(Number);
             if ([prefix, number, suffix].some(isNaN) || prefix < 10 || prefix > 99 || suffix < 1) {
-                tmp.DNI = "CUIL incorrecto";
+                tmp.intDni = "CUIL incorrecto";
+            }else{
+                datosInterno.map((element) => {
+                    if(element.intDni === cuil){
+                        tmp.intDni = "El CUIL ya existe en la BD"
+                    }
+                })
             }
         }
 
@@ -223,15 +413,15 @@ function ContextProvider({ children }) {
 
     //funcion para validar fecha de nacimiento
     function validarFechaNac(tmp) {
-        const fecha = datosForm.intFechaNac.trim().split("-");
+        const fecha = datosForm.intFechNac.trim().split("-");
         const [anio, mes, dia] = fecha.map(Number);
 
         if (isNaN(anio) || anio > 2007 || anio < 1950) {
-            tmp.intFechaNac = "El año debe estar entre 1950 y 2007";
+            tmp.intFechNac = "El año debe estar entre 1950 y 2007";
         } else if (isNaN(mes) || mes > 12 || mes < 1) {
-            tmp.intFechaNac = "Mes incorrecto"
+            tmp.intFechNac = "Mes incorrecto"
         } else if (isNaN(dia) || dia > 31 || dia < 1) {
-            tmp.intFechaNac = "Día incorrecto"
+            tmp.intFechNac = "Día incorrecto"
         } else {
             // Validar días correctos según el mes
             const fechaValida = new Date(anio, mes - 1, dia);
@@ -240,7 +430,7 @@ function ContextProvider({ children }) {
                 fechaValida.getMonth() + 1 !== mes ||
                 fechaValida.getDate() !== dia
             ) {
-                tmp.intFechaNac = "La fecha no es válida";
+                tmp.intFechNac = "La fecha no es válida";
             }
         }
 
@@ -288,12 +478,18 @@ function ContextProvider({ children }) {
 
     //paso los datos y funciones a mi Context antes definido en la linea: 4
     return (
-        <Context.Provider value={{ validarForm, setDatosForm, datosForm, error, setCampos, campos, 
+        <Context.Provider value={{ validarForm, setDatosForm, datosForm, error, setError, setCampos, campos, 
         datosPenitenciaria,
         enviarDatosPenitenciaria, 
         eliminarPenitenciaria,
         editarPenitenciaria,
-        datosDelito,setDatosDelito}}>
+        objetoDelito,setObjetoDelito,
+        enviarDatosInternos,
+        objetoInterno, setObjetoInterno,
+        datosInterno,obtenerDatosInterno,
+        eliminarInterno,editarDatoInterno,
+        valoresEditar,
+        datosDelito,editarDatosDelito}}>
             {children}
         </Context.Provider>
     )

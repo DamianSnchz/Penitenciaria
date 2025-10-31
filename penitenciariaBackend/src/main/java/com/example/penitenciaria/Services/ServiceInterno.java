@@ -19,67 +19,80 @@ import org.springframework.stereotype.Service;
  *
  * @author damian
  */
-
 @Service
 public class ServiceInterno {
+
     @Autowired
     private RepositorioInterno r;
-    
+
     @Autowired
     private RepositorioPenitenciaria rp;
-    
+
     @Autowired
     private RepositorioDelito rd;
     
-    public List<Interno> listar(){
+    @Autowired
+    private ServiceDelito servicioDelito;
+
+    public List<Interno> listar() {
         return r.findAll();
     }
-    
-    public void eliminar(Long id){
-        r.deleteById(id);
+
+    public void eliminar(Long id) {
+        Interno interno = r.findById(id).orElseThrow(()-> new RuntimeException("Error al encontrar la penitenciaria: " + id));
+        
+        if(interno != null){
+            //doy de baja al interno
+            interno.setIntEstado("inactivo");
+            r.save(interno);
+            //doy de baja al delito vinculado
+            servicioDelito.eliminar(interno.getIdDelito().getIdDelito());
+        }
     }
-    
-    public Interno guardar(Interno interno){
+
+    public Interno guardar(Interno interno) {
         Interno internoAsignado = asignarPenitenciaria(interno);
         internoAsignado = asignarDelito(interno);
-        
+
         return r.save(internoAsignado);
     }
-    
-    public Interno asignarPenitenciaria(Interno interno){
+
+    public Interno asignarPenitenciaria(Interno interno) {
         Long id = null;
         //verifico si el id provenientes no son nulos
-        if(interno.getIdPenitenciaria() != null && interno.getIdPenitenciaria().getIdPenitenciaria() != null ){
+        if (interno.getIdPenitenciaria() != null && interno.getIdPenitenciaria().getIdPenitenciaria() != null) {
             id = interno.getIdPenitenciaria().getIdPenitenciaria();
         }
-        
-        if(id != null){
-            final Long finalId= id;
+
+        if (id != null) {
+            final Long finalId = id;
             Penitenciaria p = rp.findById(id).orElseThrow(() -> new RuntimeException("Error al encontrar penitenciaria: " + finalId));
             interno.setIdPenitenciaria(p);
         }
         return interno;
     }
-    
-    
-    public Interno asignarDelito(Interno interno){
-        Long id = null;
-        //verifico si el id provenientes no son nulos
-        if(interno.getIdDelito() != null && interno.getIdDelito().getId() != null ){
-            id = interno.getIdDelito().getId();
+
+    public Interno asignarDelito(Interno interno) {
+        Delito delito = interno.getIdDelito();
+        System.out.println(delito);
+        //verifico si exite el objeto delito
+        if (delito != null) {
+            //verifico si existe en la tabla
+            if (delito.getIdDelito() != null) {
+                final Long id = delito.getIdDelito();
+                Delito delitoExistente = rd.findById(id).orElseThrow(() -> new RuntimeException("Error al encontrar delito: " + id));
+                interno.setIdDelito(delitoExistente);
+            }else{
+                //si todavia el delito no existe en la tabla lo guardo
+                interno.setIdDelito(rd.save(delito));
+            }
         }
-        
-        if(id != null){
-            final Long finalId= id;
-            Delito d = rd.findById(id).orElseThrow(() -> new RuntimeException("Error al encontrar penitenciaria: " + finalId));
-            interno.setIdDelito(d);
-        }
+
         return interno;
     }
-    
-    
-    public Optional<Interno> porId(Long id){
+
+    public Optional<Interno> porId(Long id) {
         return r.findById(id);
     }
-    
+
 }

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
  *
  * @author damian
  */
-@Controller
+@RestController
 @RequestMapping("/api/interno")
 @CrossOrigin(origins = "*")
 public class ControllerInterno {
@@ -32,7 +32,7 @@ public class ControllerInterno {
         return servicio.listar();
     }
     
-    @GetMapping("/¨{id}")
+    @GetMapping("/{id}")
     public Optional<Interno> porId(@PathVariable Long id){
         return servicio.porId(id);
     }
@@ -48,7 +48,7 @@ public class ControllerInterno {
     }
     
     
-    @PutMapping("{id}")
+    @PutMapping("/{id}")
     public void editar(@PathVariable Long id, @RequestBody Interno interno){
         interno.setLegajo(id); //nos aseguramos de que edite el registro correcto
         servicio.guardar(interno);
