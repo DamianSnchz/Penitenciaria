@@ -48,4 +48,9 @@ public class ControllerCondena {
         return servicio.guardar(condena);
     }
     
+    @DeleteMapping("/{id}")
+    public void eliminar(@PathVariable Long id){
+        servicio.eliminar(id);
+    }
+    
 }
