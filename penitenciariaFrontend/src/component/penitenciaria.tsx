@@ -18,7 +18,7 @@ function Penitenciaria() {
             setCampos([]);
             setDatosForm({});
         }
-    }, [])
+    },[])
 
 
     
@@ -35,7 +35,7 @@ function Penitenciaria() {
         if (validarForm()) {
 
             
-            if(id != 0){
+            if(id !== 0){
                 console.log("Entro a editar");
                 editarPenitenciaria(datosForm.idPenitenciaria);
             }else{

@@ -4,6 +4,8 @@
  */
 package com.example.penitenciaria.Controller;
 
+import com.example.penitenciaria.DTO.InformeIntXPenXDel;
+import com.example.penitenciaria.DTO.InformeIntXProfesion;
 import com.example.penitenciaria.Entity.Interno;
 import com.example.penitenciaria.Services.ServiceInterno;
 import com.example.penitenciaria.Services.ServicePenitenciaria;
@@ -53,4 +55,19 @@ public class ControllerInterno {
         interno.setLegajo(id); //nos aseguramos de que edite el registro correcto
         servicio.guardar(interno);
     }
+    
+    
+    //metodo para generar informe de internos por penitenciaria y por delito
+    @GetMapping("/informeIntPenDel")
+    public List<InformeIntXPenXDel> informeIntPenDel(){
+        return servicio.informeIntPenDel();
+    }
+    
+    
+    //metodo para generar informe de internos por penitenciaria y por delito
+    @GetMapping("/informeIntProfesion")
+    public List<InformeIntXProfesion> informeIntProfesion(){
+        return servicio.informeIntProfesion();
+    }
+    
 }

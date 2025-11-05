@@ -11,16 +11,16 @@ package com.example.penitenciaria.DTO;
 public class InformeIntXPenXDel {
     private String penNom;
     private String delDelito;
-    private String nombre;
+    private String intNombre;
+    private String intApellido;
 
-    public InformeIntXPenXDel(String penNom, String delDelito, String nombre) {
+    public InformeIntXPenXDel(String penNom, String delDelito, String intNombre, String intApellido) {
         this.penNom = penNom;
         this.delDelito = delDelito;
-        this.nombre = nombre;
+        this.intNombre = intNombre;
+        this.intApellido = intApellido;
     }
 
-    
-    
     
     
     /**
@@ -52,16 +52,30 @@ public class InformeIntXPenXDel {
     }
 
     /**
-     * @return the nombre
+     * @return the intNombre
      */
-    public String getNombre() {
-        return nombre;
+    public String getIntNombre() {
+        return intNombre;
     }
 
     /**
-     * @param intNom the nombre to set
+     * @param intNom the intNombre to set
      */
-    public void setNombre(String nombre) {
-        this.nombre = nombre;
+    public void setIntNombre(String intNombre) {
+        this.intNombre = intNombre;
+    }
+
+    /**
+     * @return the intApellido
+     */
+    public String getIntApellido() {
+        return intApellido;
+    }
+
+    /**
+     * @param intApellido the intApellido to set
+     */
+    public void setIntApellido(String intApellido) {
+        this.intApellido = intApellido;
     }
 }

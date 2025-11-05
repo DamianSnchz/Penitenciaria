@@ -5,6 +5,7 @@
 package com.example.penitenciaria.Repositorio;
 
 import com.example.penitenciaria.DTO.InformeIntXPenXDel;
+import com.example.penitenciaria.DTO.InformeIntXProfesion;
 import com.example.penitenciaria.Entity.Interno;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,10 +20,13 @@ import org.springframework.stereotype.Repository;
 public interface RepositorioInterno extends JpaRepository<Interno, Long>{
        
     
-    // El sistema deberá realizar un informe de la cantidad de internos 
-    //por penitenciaria por delitos
     
-    @Query("SELECT new com.example.penitenciaria.DTO.InformeIntXPenXDel(p.penNom, d.delDelito, CONCAT(i.intNombre, ' ', i.intApellido)) FROM Interno i JOIN i.idPenitenciaria p JOIN i.idDelito d WHERE i.intEstado = 'activo' GROUP BY p.penNom, d.delDelito, i.intNombre, i.intApellido")
+    @Query("SELECT new com.example.penitenciaria.DTO.InformeIntXPenXDel(p.penNom, d.delDelito, i.intNombre, i.intApellido) FROM Interno i JOIN i.idPenitenciaria p JOIN i.idDelito d WHERE i.intEstado = 'activo' ORDER BY p.penNom, d.delDelito")
     public List<InformeIntXPenXDel> informeIntXPenXDel();
+    
+    
+    
+    @Query("SELECT new com.example.penitenciaria.DTO.InformeIntXProfesion(i.intProfesion, i.intNombre, i.intApellido, i.intDni, i.intFechNac) FROM Interno i WHERE i.intEstado = 'activo' AND i.intProfesion IS NOT NULL ORDER BY i.intProfesion")
+    public List<InformeIntXProfesion> informeIntXProfesion();
     
 }

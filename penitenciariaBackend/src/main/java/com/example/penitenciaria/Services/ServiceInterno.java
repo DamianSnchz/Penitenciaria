@@ -4,6 +4,8 @@
  */
 package com.example.penitenciaria.Services;
 
+import com.example.penitenciaria.DTO.InformeIntXPenXDel;
+import com.example.penitenciaria.DTO.InformeIntXProfesion;
 import com.example.penitenciaria.Entity.Delito;
 import com.example.penitenciaria.Entity.Interno;
 import com.example.penitenciaria.Entity.Penitenciaria;
@@ -93,6 +95,18 @@ public class ServiceInterno {
 
     public Optional<Interno> porId(Long id) {
         return r.findById(id);
+    }
+    
+    
+    //Generar informe de cantidad de internos por penitenciaria y por delitos
+    public List<InformeIntXPenXDel> informeIntPenDel(){
+        return r.informeIntXPenXDel();
+    }
+     
+    
+    //generar informe de internos por profesion
+    public List<InformeIntXProfesion> informeIntProfesion(){
+        return r.informeIntXProfesion();
     }
 
 }

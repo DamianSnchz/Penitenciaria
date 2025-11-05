@@ -1,6 +1,12 @@
+import { useState } from "react";
+import { useCartContext } from "../contextProvider/context.jsx";
+import { InterfaceInformeIntPenDel} from "../interface/interfaceInformeIntPenDel.js"
 
 
 function InformeDP() {
+    const {setDatosInformeIntPenDel, datosInformeIntPenDel,informeIntPenDel} = useCartContext();
+
+
     return (
         <div className="container-component">
             <article>
@@ -11,55 +17,28 @@ function InformeDP() {
                     </h4>
                 </div>
                 <br />
-                <button className="btn btn-primary" type="submit">
+                <button className="btn btn-primary" type="submit" onClick={informeIntPenDel}>
                     Generar informe
                 </button>
                 <br /><br />
                 <table className="table mb-2">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
+                            <th scope="col">Penitenciaria</th>
+                            <th scope="col">Delito</th>
                             <th scope="col">Nombre</th>
-                            <th scope="col">Dirección</th>
-                            <th scope="col">Capacidad</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col">Apellido</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Penitenciaria girasoles</td>
-                            <td>Av Belgrano 1444</td>
-                            <td>580</td>
-                            <td>Masculino</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Penitenciaria girasoles</td>
-                            <td>Av Belgrano 1444</td>
-                            <td>580</td>
-                            <td>Masculino</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Penitenciaria girasoles</td>
-                            <td>Av Belgrano 1444</td>
-                            <td>580</td>
-                            <td>Masculino</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
+                        {datosInformeIntPenDel.map((element : InterfaceInformeIntPenDel, index: number) =>(
+                            <tr key={index}>
+                                <th scope="row">{element.penNom}</th>
+                                <td>{element.delDelito}</td>
+                                <td>{element.intNombre}</td>
+                                <td>{element.intApellido}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 <br />

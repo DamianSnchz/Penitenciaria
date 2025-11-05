@@ -15,31 +15,48 @@ function ContextProvider({ children }) {
     const [objetoDelito, setObjetoDelito] = useState({});
     //estado para almacenar el objeto interno
     const [objetoInterno, setObjetoInterno] = useState({});
+    //estado para almacenar el objeto condena
+    const [objetoCondena, setObjetoCondena] = useState({});
     //variable para almacenar los datos de penitenciaria provenientes de la petición GET
     const [datosPenitenciaria, setDatosPenitenciaria] = useState([]);
     //variable para almacenar los datos de internos provenientes de la petición GET
     const [datosInterno, setDatosInterno] = useState([]);
     //variable para almacenar los datos de delitos provenientes de la petición GET
     const [datosDelito, setDatosDelito] = useState([]);
+    //estado para almacenar informe de internos por penitenciaria y por delito
+    const [datosInformeIntPenDel,setDatosInformeIntPenDel] = useState([]);
+    //estado para almacenar informe de internos por profesion
+    const [datosInformeIntProfesion,setDatosInformeIntProfesion] = useState([]);
+    //variable para almacenar los datos de condenas provenientes de la petición GET
+    const [datosCondena, setDatosCondena] = useState([]);
     // almacena los datos buscados, es utilizado en buscarDatos()
     //luego su valor pasara a setDatos() para ser mostrados
     const [buscar, setBuscar] = useState([]);
     //estados para validar formularios
     const [datosForm, setDatosForm] = useState({});
+    //estado para guardar los datos que se buscan
+    const [datosBuscados, setDatosBuscados] = useState([]);
     
 
     //estados para mostrar los errores en el formulario
     const [error, setError] = useState({});
     //estados para almacenal el nom de los campos de los inputs para poder pasarlos como parametros
     const [campos, setCampos] = useState([]);
-    // ------------------------------------------------------------------------------------
-    // funciones:
+    
+    /*=================================================================================================================================================*/
+    /*=====================================================Funciones =================================================================================*/
+    /*=================================================================================================================================================*/
+
     useEffect(() => {
         // ejecutar funcion de obtencion de datos al inicio del programa
         obtenerDatosPenitenciaria();
         obtenerDatosInterno();
         obtenerDatosDelito();
     }, [])
+
+    useEffect(() => {
+        obtenerDatosDelito();
+    }, [datosInterno])
 
     // funcion de busqueda filtrado
     /*const buscarDatos = (ev) => {
@@ -61,20 +78,47 @@ function ContextProvider({ children }) {
         buscarDatos(ev.target.value);
     }*/
 
+    const buscarLegajo = (evento) => {
+        //realizo una busqueda de legajo con los datos obtenidos de internos
+        try{
+            const response = datosCondena.filter((element) => {
+            console.log(evento)
+            if(element.legajo.number.includes(evento)){
+                return element;
+            }
+        })
+
+        setDatosBuscados(response);
+        }catch(error){
+            console.log("Error al filtrar datos: ", error);
+        }
+    }
+
+    const legajoInput = (evento)=>{
+        //realizo la busqueda
+        buscarLegajo(evento.target.value);
+    }
+    
+
     /*=================================================================================================================================================*/
     /*=====================================================Funciones Penitenciaria====================================================================*/
     /*=================================================================================================================================================*/
 
     //funcion para pedir los datos de penitenciaria a la API
     async function obtenerDatosPenitenciaria() {
-        // buscar el JSON
-        const response = await fetch('http://localhost:8080/api/penitenciaria');
-        // convertir la peticion en objeto
-        const objeto = await response.json();
-        // guardar los datos obtenidos en mis variables de trabajo 
-        //setDatos y setBuscar los utilizo para hacer las busquedas y filtrados
-        setDatosPenitenciaria(objeto);
-        //setBuscar(objeto);
+        try{
+            // buscar el JSON
+            const response = await fetch('http://localhost:8080/api/penitenciaria');
+            if(!response.ok){
+                throw new Error("Error al obtener datos de penitenciaria");
+            }
+            // convertir la peticion en objeto
+            const objeto = await response.json();
+            // guardar los datos obtenidos 
+            setDatosPenitenciaria(objeto);
+        }catch(error){
+            console.log("Error: " + error);
+        }
     }
 
     //funcion para enviar datos de penitenciaria a la API
@@ -267,7 +311,7 @@ function ContextProvider({ children }) {
             const obj = await response.json();
             setDatosDelito(obj);
         }catch(error){
-            alert("Error:" , error);
+            console.log("Error:" , error);
         }
     }
 
@@ -291,7 +335,7 @@ function ContextProvider({ children }) {
             await obtenerDatosDelito();
 
         }catch(error){
-            alert("Error: ", error);
+            console.log("Error: ", error);
         }
     }
 
@@ -309,9 +353,96 @@ function ContextProvider({ children }) {
             //actualizamos los datos de delitos
             await obtenerDatosDelito();
         }catch(error){
-            alert("Error: ", error)
+            console.log("Error: ", error)
         }
     }
+
+    /*=================================================================================================================================================*/
+    /*===================================================== Informes ====================================================================*/
+    /*=================================================================================================================================================*/
+    async function informeIntPenDel(){
+        try{
+            const response = await fetch("http://localhost:8080/api/interno/informeIntPenDel");
+            if(!response.ok){
+                throw new Error("Error al solicitar informe");
+            }
+            const obj = await response.json();
+            setDatosInformeIntPenDel(obj);
+
+        }catch(error){
+
+        }
+    }
+
+    async function informeIntProfesion(){
+        try{
+            const response = await fetch("http://localhost:8080/api/interno/informeIntProfesion");
+            if(!response.ok){
+                throw new Error("Error al solicitar informe");
+            }
+            const obj = await response.json();
+            setDatosInformeIntProfesion(obj);
+
+        }catch(error){
+
+        }
+    }
+
+    /*=================================================================================================================================================*/
+    /*=====================================================Modificacion de condenas====================================================================*/
+    /*=================================================================================================================================================*/
+    async function obtenerDatosCondena() {
+        try{
+            const response = await fetch("http://localhost:8080/api/condena");
+            if(!response.ok){
+                throw new Error("Error al obtener datos de condena");
+            }
+            //convertimos la respuesta en objeto
+            const obj = await response.json();
+            setDatosCondena(obj);
+        }catch(error){
+            console.log("Error:" , error);
+        }
+    }
+
+    async function obtenerCondena(id) {
+        try{
+            const response = datosCondena.find(element => element.legajo?.legajo === id);
+            if(response){
+                setObjetoCondena(response);
+            }else{
+                throw new Error("Condena inexistente");
+                setObjetoCondena({});
+            }
+            
+            
+        }catch(error){
+            console.log("Error:" , error);
+        }
+    }
+
+    async function editarDatosCondena(id) {
+        try{
+            const response = await fetch("http://localhost:8080/api/condena/" + id, {
+                                                                                    method: "PUT",
+                                                                                    headers:{
+                                                                                        "content-type":"application/json"
+                                                                                    },
+                                                                                    body: JSON.stringify(datosCondena)
+                                                                                })
+            if(!response.ok){
+                throw new Error("Error al editar condena");
+            }
+            //limpiamos el estado de datosForm
+            setDatosForm({});
+            //limpiamos el estado de errores
+            setError({});
+
+        }catch(error){
+            console.log("Error: ", error);
+        }
+    }
+
 
     /*=================================================================================================================================================*/
     /*=====================================================Validacion de formularios====================================================================*/
@@ -327,15 +458,18 @@ function ContextProvider({ children }) {
             setError(objeto);
         }
 
-        //si existe la clave "DNI" ingresara al if para realizar la validaciòn
-        if (datosForm.intDni?.trim()) {
-            //variable para verificar si existe un campo "tipo" en el objeto 
-            //si la clave "tipo" no existe solo se asigna una cadena vacia (con el fin de que el programa no se rompa)
-            const tipo = datosForm.intTipo?.trim() || "";
-            if (tipo === "CUIL") {
-                objeto = validarCuil(objeto);
-            } else {
-                objeto = validarDNI(objeto);
+        //si existe "intDni" en campos proceso a hacer la validacion
+        if(campos.includes("intDni")){
+            //si existe la clave "DNI" ingresara al if para realizar la validaciòn
+            if (datosForm.intDni?.trim()) {
+                //variable para verificar si existe un campo "tipo" en el objeto 
+                //si la clave "tipo" no existe solo se asigna una cadena vacia (con el fin de que el programa no se rompa)
+                const tipo = datosForm.intTipo?.trim() || "";
+                if (tipo === "CUIL") {
+                    objeto = validarCuil(objeto);
+                } else {
+                    objeto = validarDNI(objeto);
+                }
             }
         }
 
@@ -343,7 +477,8 @@ function ContextProvider({ children }) {
         //verificamos si fecha es distinto de null
         if (fecha) {
             fecha.forEach((e) => {
-                if (datosForm[e]?.trim()) {
+                // Solo valida la fecha si está en 'campos' Y tiene un valor
+                if (campos.includes(e) && datosForm[e]?.trim()) {
                     if (e === "intFechNac") {
                         objeto = validarFechaNac(objeto);
                     } else {
@@ -353,6 +488,10 @@ function ContextProvider({ children }) {
             });
         }
 
+        //si existe delDuracion hacemos la validacion
+        if(datosForm.delDuracion?.trim()){
+            objeto = validarDuracion(objeto);
+        }
 
         setError(objeto);
 
@@ -367,14 +506,29 @@ function ContextProvider({ children }) {
         return tmp;
     }
 
+    function validarDuracion(tmp){
+        try{
+            const duracion = datosForm.delDuracion?.trim();
+
+            if(Number(duracion) <= 0){
+                console.log("entro al error")
+                tmp.delDuracion = "Duracion incorrecta"
+            }
+            return tmp;
+        }catch(error){
+            console.log("Error: ", error);
+        }
+    }
+
     //funcion para validar DNI
     function validarDNI(tmp) {
         const dni = datosForm.intDni?.trim();
+        const legajo = datosForm.legajo;
         const exp = /^[0-9]{8}$/;
 
         if (!exp.test(dni)) {
             tmp.intDni = "El DNI debe contener 8 digitos númericos";
-        }else{
+        }else if (!legajo){
             datosInterno.map((element) => {
                 if(element.intDni === dni){
                     tmp.intDni = "El DNI ya existe en la BD"
@@ -391,6 +545,7 @@ function ContextProvider({ children }) {
     //funcion para validar cuil
     function validarCuil(tmp) {
         const cuil = datosForm.intDni?.trim();
+        const legajo = datosForm.legajo;
         const exp = /^[0-9-]{2}-[0-9]{8}-[0-9]{1}$/;
         if (!exp.test(cuil)) {
             tmp.intDni = "CUIL incorrecto";
@@ -398,14 +553,17 @@ function ContextProvider({ children }) {
             const [prefix, number, suffix] = cuil.split("-").map(Number);
             if ([prefix, number, suffix].some(isNaN) || prefix < 10 || prefix > 99 || suffix < 1) {
                 tmp.intDni = "CUIL incorrecto";
-            }else{
-                datosInterno.map((element) => {
-                    if(element.intDni === cuil){
-                        tmp.intDni = "El CUIL ya existe en la BD"
-                    }
-                })
             }
         }
+        //si el legajo ya existe no debe realizar la validacion (si el legajo no contiene un valor numerico dará undefined "false")
+        if(!legajo){
+            datosInterno.map((element) => {
+            if(element.intDni === cuil){
+                tmp.intDni = "El CUIL ya existe en la BD"
+            }
+         })
+        }
+            
 
         return tmp;
     }
@@ -489,7 +647,11 @@ function ContextProvider({ children }) {
         datosInterno,obtenerDatosInterno,
         eliminarInterno,editarDatoInterno,
         valoresEditar,
-        datosDelito,editarDatosDelito}}>
+        datosDelito,editarDatosDelito,
+        datosInformeIntPenDel, setDatosInformeIntPenDel,informeIntPenDel,
+        datosInformeIntProfesion,setDatosInformeIntProfesion, informeIntProfesion,
+        obtenerCondena,editarDatosCondena,objetoCondena,setObjetoCondena,
+        datosBuscados, legajoInput}}>
             {children}
         </Context.Provider>
     )

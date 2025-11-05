@@ -12,7 +12,7 @@ import  {InterfaceInterno} from "../interface/interfaceInternos.ts";
 
 function Internos() {
 	//función compartida del proveedor de datos
-	const { validarForm, datosForm, setDatosForm, error, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar} = useCartContext();
+	const { validarForm, datosForm, setDatosForm, error, setError, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar} = useCartContext();
 
 
 	
@@ -20,13 +20,14 @@ function Internos() {
 	useEffect(() => {
 		//paso los campos de cada inputs para poder hacer las validaciones
 		setCampos(["intApellido", "intNombre", "intSexo", "intAlias", "intFechNac", "intEstadoCivil", "intDptoNac",
-			"intPciaNac", "intNacionalidad", "intProfesion", "intDireccion", "intDni", "intTipo","delito","juez", 
+			"intPciaNac", "intNacionalidad", "intProfesion", "intDni", "intTipo","delito","juez", 
 			"idPenitenciaria","fechaIngreso","intDomicilio"]);
 
 		return() => {
 			//limpio "campos" para que al ingresar al componente "delitos" pueda cargar los ID de sus nuevos inputs
 			//para hacer las validaciones
 			setCampos([]);
+			setError({});
 		}
 	}, [])//se ejecuta solo una vez cuando se realiza el montaje y desmontaje
 
@@ -153,13 +154,6 @@ function Internos() {
 								{error.intProfesion && <span className="error" >{error.intProfesion}</span>}
 							</div>
 						</div>
-						<div className="input-container">
-							<div className="w-100">
-								<label className="form-label" htmlFor="intDireccion">Dirección</label>
-								<input className="w-100" type="text" name="intDireccion" id="intDireccion" onChange={handleChange} value={datosForm?.intDireccion ?? ""}/>
-								{error.intDireccion && <span className="error" >{error.intDireccion}</span>}
-							</div>
-						</div>
 						<div className="input-container gap-4">
 							<div>
 								<label className="form-label me-5" htmlFor="intTipo">Tipo de Documento</label>
@@ -224,7 +218,7 @@ function Internos() {
 							<button className="btn btn-primary mx-2" type="submit">
 								Guardar
 							</button>
-							<button className="btn btn-outline-secondary" type="button" onClick={()=>{setDatosForm({}); setObjetoInterno({}) }} >
+							<button className="btn btn-outline-secondary" type="button" onClick={()=>{setDatosForm({}); setObjetoInterno({}); setError({}) }} >
 								Cancelar
 							</button>
 						</div>

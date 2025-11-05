@@ -16,10 +16,12 @@ function RegistrarD() {
     useEffect(()=>{
         //cargamos los campos de los inputs para hacer las validacios
         setCampos(["delDelito","delJuez","delFechDet","delFechIniCondena","delDuracion"]);
+        
 
         return()=>{
             //limpio "campos"
             setCampos([]);
+            setError({});
         }
     },[])
 
@@ -37,7 +39,6 @@ function RegistrarD() {
         //paso las claves para validar las fechas. Si el metodo me devuelve "true" realizara la navegaciòn a "/internos"
         const valor = validarForm(["delFechDet","delFechIniCondena"]);
         const id = datosForm.idDelito ?? 0;
-        
         if(valor){
             if(id != 0){
                 editarDatosDelito(id);

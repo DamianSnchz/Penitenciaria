@@ -48,7 +48,7 @@ public class Interno {
     @Column(name = "intEstadoCivil", length = 10, nullable = false)
     private String intEstadoCivil;
 
-    @Column(name = "intProfesion", length = 30, nullable = false)
+    @Column(name = "intProfesion", length = 30)
     private String intProfesion;
 
     @ManyToOne
