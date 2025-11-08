@@ -1,0 +1,137 @@
+/* Contenedor principal que centra la tarjeta en la pantalla.
+  Usa el color primario del body que pediste no cambiar.
+*/
+.container-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 1rem;
+  /* El background-color ya debería venir del body/root, pero lo dejamos aquí como fallback si es necesario */
+  background-color: var(--color-primario); 
+}
+
+/* La "tarjeta" del formulario.
+  Usamos tu '--color-select' para el fondo del form.
+*/
+.login-form-container {
+  width: 100%;
+  max-width: 400px; /* Ancho máximo para que no sea demasiado grande */
+  padding: 2.5rem;
+  border-radius: 12px; /* Esquinas más suaves */
+  background-color: var(--color-select); /* Tu color: #243647 */
+  border: 1px solid rgba(145, 173, 201, 0.2); /* Borde sutil */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3); /* Sombra para "flotar" */
+}
+
+/* Título "Inicio de Sesión" */
+.login-form-container h2 {
+  color: #FFFFFF;
+  font-family: var(--font-family);
+  font-size: var(--font-size-24);
+  text-align: center;
+  margin: 0 0 2rem 0; /* Espacio inferior */
+}
+
+/* Contenedor de cada grupo de Label + Input */
+.input-group {
+  margin-bottom: 1.5rem;
+}
+
+/* Etiquetas (Usuario, Contraseña) */
+.login-form-container form label.form-label {
+  display: block; /* Asegura que ocupe su propia línea */
+  font-family: var(--font-family);
+  font-size: var(--font-size-14);
+  color: var(--color-border); /* Tu color: #91ADC9 */
+  margin-bottom: 0.5rem;
+}
+
+/* Los inputs de texto y contraseña */
+.form-control-login {
+  background-color: var(--color-fondo-input); /* Tu color: #1A2633 */
+  border: 1px solid var(--color-border);
+  border-radius: 6px;
+  padding: 0.75rem 1rem;
+  color: #FFFFFF;
+  font-size: var(--font-size-16);
+  width: 100%;
+  box-sizing: border-box; /* Previene problemas de padding y ancho */
+  transition: border-color 0.3s, box-shadow 0.3s; /* Transición suave para focus */
+}
+
+/* Efecto "focus" moderno al hacer clic en el input */
+.form-control-login:focus {
+  outline: none; /* Eliminar el contorno predeterminado del navegador */
+  border-color: var(--color-btn); /* Usa tu color de botón */
+  box-shadow: 0 0 0 3px rgba(18, 128, 237, 0.3); /* Efecto de "resplandor" */
+}
+
+/* Contenedor del checkbox */
+.form-check {
+  display: flex;
+  align-items: center;
+  margin-top: -0.5rem; /* Pega el checkbox más cerca del input de pass */
+  margin-bottom: 1.5rem;
+}
+
+/* El checkbox en sí */
+.form-check-input {
+  width: 1em;
+  height: 1em;
+  margin-right: 0.5rem;
+  background-color: var(--color-fondo-input);
+  border: 1px solid var(--color-border);
+  /* Le da el color azul a la marca de verificación */
+  accent-color: var(--color-btn); 
+}
+
+/* Etiqueta "Mostrar contraseña" */
+.form-check-label {
+  font-size: var(--font-size-14);
+  color: var(--color-border);
+  user-select: none; /* Evita que el texto se seleccione al hacer clic */
+}
+
+/* Botón de Ingresar */
+.btn-primary {
+  width: 100%; /* Botón de ancho completo */
+  padding: 0.75rem;
+  font-size: var(--font-size-16);
+  font-weight: bold;
+  background-color: var(--color-btn);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.1s;
+}
+
+.btn-primary:hover {
+  background-color: #106ac4; /* Un poco más oscuro en hover */
+}
+
+.btn-primary:active {
+  transform: scale(0.98); /* Efecto al hacer clic */
+}
+
+/* Estilos para mensajes de error específicos de campo */
+.error-field {
+  color: #ff6b6b; /* Rojo para errores */
+  font-size: var(--font-size-14);
+  margin-top: 0.25rem;
+  display: block;
+}
+
+/* Estilos para un mensaje de error general (ej: "Usuario o contraseña incorrectos") */
+.error-general {
+  display: block;
+  width: 100%;
+  text-align: center;
+  padding: 0.75rem;
+  border-radius: 6px;
+  background-color: rgba(255, 107, 107, 0.2); /* Fondo semitransparente */
+  border: 1px solid #ff6b6b; /* Borde rojo */
+  color: #ffc9c9; /* Texto rojo claro */
+  margin-bottom: 1.5rem;
+  box-sizing: border-box;
+}

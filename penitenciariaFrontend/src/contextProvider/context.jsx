@@ -24,9 +24,9 @@ function ContextProvider({ children }) {
     //variable para almacenar los datos de delitos provenientes de la petición GET
     const [datosDelito, setDatosDelito] = useState([]);
     //estado para almacenar informe de internos por penitenciaria y por delito
-    const [datosInformeIntPenDel,setDatosInformeIntPenDel] = useState([]);
+    const [datosInformeIntPenDel, setDatosInformeIntPenDel] = useState([]);
     //estado para almacenar informe de internos por profesion
-    const [datosInformeIntProfesion,setDatosInformeIntProfesion] = useState([]);
+    const [datosInformeIntProfesion, setDatosInformeIntProfesion] = useState([]);
     //variable para almacenar los datos de condenas provenientes de la petición GET
     const [datosCondena, setDatosCondena] = useState([]);
     // almacena los datos buscados, es utilizado en buscarDatos()
@@ -36,13 +36,15 @@ function ContextProvider({ children }) {
     const [datosForm, setDatosForm] = useState({});
     //estado para guardar los datos que se buscan
     const [datosBuscados, setDatosBuscados] = useState([]);
-    
+    //estado para permitir el acceso de login
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
 
     //estados para mostrar los errores en el formulario
     const [error, setError] = useState({});
     //estados para almacenal el nom de los campos de los inputs para poder pasarlos como parametros
     const [campos, setCampos] = useState([]);
-    
+
     /*=================================================================================================================================================*/
     /*=====================================================Funciones =================================================================================*/
     /*=================================================================================================================================================*/
@@ -83,27 +85,51 @@ function ContextProvider({ children }) {
         buscarDatos(ev.target.value);
     }*/
 
+
+
+    /*=================================================================*/
+    /*==================== Funciones de Autenticación =================*/
+    /*=================================================================*/
+
+    
+    function login(usuario, password) {
+        if (usuario === "admin" && password === "1234") {
+            setIsAuthenticated(true); // ¡Marca al usuario como logueado!
+            setDatosForm({}); // Limpia el formulario
+            setError({}); // Limpia errores
+            return true; // Devuelve éxito
+        } else {
+            setError({ general: "Usuario o contraseña incorrectos" });
+            return false; // Devuelve fracaso
+        }
+    }
+
+    
+    function logout() {
+        setIsAuthenticated(false);
+    }
+
     const buscarLegajo = (evento) => {
         //realizo una busqueda de legajo con los datos obtenidos de internos
-        try{
+        try {
             const response = datosCondena.filter((element) => {
-            console.log(evento)
-            if(element.legajo.number.includes(evento)){
-                return element;
-            }
-        })
+                console.log(evento)
+                if (element.legajo.number.includes(evento)) {
+                    return element;
+                }
+            })
 
-        setDatosBuscados(response);
-        }catch(error){
+            setDatosBuscados(response);
+        } catch (error) {
             console.log("Error al filtrar datos: ", error);
         }
     }
 
-    const legajoInput = (evento)=>{
+    const legajoInput = (evento) => {
         //realizo la busqueda
         buscarLegajo(evento.target.value);
     }
-    
+
 
     /*=================================================================================================================================================*/
     /*=====================================================Funciones Penitenciaria====================================================================*/
@@ -111,10 +137,10 @@ function ContextProvider({ children }) {
 
     //funcion para pedir los datos de penitenciaria a la API
     async function obtenerDatosPenitenciaria() {
-        try{
+        try {
             // buscar el JSON
             const response = await fetch('http://localhost:8080/api/penitenciaria');
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al obtener datos de penitenciaria");
             }
             // convertir la peticion en objeto
@@ -123,7 +149,7 @@ function ContextProvider({ children }) {
             const penitenciariaActivas = objeto.filter((element) => (element.penEstado === "activo"))
             // guardar los datos obtenidos 
             setDatosPenitenciaria(penitenciariaActivas);
-        }catch(error){
+        } catch (error) {
             console.log("Error: " + error);
         }
     }
@@ -132,17 +158,17 @@ function ContextProvider({ children }) {
     async function enviarDatosPenitenciaria() {
         try {
             const respuesta = await fetch("http://localhost:8080/api/penitenciaria", {
-                                                                                       method: "POST",
-                                                                                       headers: {
-                                                                                           "Content-type": "application/json"
-                                                                                       },
-                                                                                       body: JSON.stringify(datosForm)
-                                                                                   });
-            if(!respuesta.ok){
+                method: "POST",
+                headers: {
+                    "Content-type": "application/json"
+                },
+                body: JSON.stringify(datosForm)
+            });
+            if (!respuesta.ok) {
                 throw new Error("Error al enviar los datos");
             }
 
-           //actualizamos los valores
+            //actualizamos los valores
             await obtenerDatosPenitenciaria();
             //limpiamos los datos del formulario
             setDatosForm({});
@@ -154,36 +180,36 @@ function ContextProvider({ children }) {
     }
 
     //Eliminar Penitenciaria
-    async function eliminarPenitenciaria(id){
-        try{
+    async function eliminarPenitenciaria(id) {
+        try {
             const response = await fetch("http://localhost:8080/api/penitenciaria/" + id, {
-                                                                                        method: "DELETE"
-                                                                                    });
-            if(!response.ok){
+                method: "DELETE"
+            });
+            if (!response.ok) {
                 throw new Error("Error al eliminar");
             }
 
             //refresco los valores de la tabla
             await obtenerDatosPenitenciaria();
-        }catch(error){
+        } catch (error) {
             console.log("Error al eliminar un registro", error);
         }
 
     }
 
     //editar penitenciaria
-    async function editarPenitenciaria(id){
-        try{
-            const response = await fetch("http://localhost:8080/api/penitenciaria/" + id,{
-                method:"PUT",
-                headers:{
-                    "content-type":"application/json",
+    async function editarPenitenciaria(id) {
+        try {
+            const response = await fetch("http://localhost:8080/api/penitenciaria/" + id, {
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json",
                     "Access-Control-Allow-Origin": "http://localhost:8080/api/penitenciaria"
                 },
                 body: JSON.stringify(datosForm)
             })
 
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al editar penitenciaria");
             }
 
@@ -192,7 +218,7 @@ function ContextProvider({ children }) {
             //limpiamos la variable datosForm
             setDatosForm({});
 
-        }catch(error){
+        } catch (error) {
             console.log("Error al editar una penitenciaria: ", error);
         }
     }
@@ -201,15 +227,15 @@ function ContextProvider({ children }) {
     /*=====================================================Funciones Internos====================================================================*/
     /*=================================================================================================================================================*/
     async function enviarDatosInternos() {
-        try{
-            const response = await fetch("http://localhost:8080/api/interno",{
-                                                                                method:"POST",
-                                                                                headers:{
-                                                                                    "content-type": "application/json"
-                                                                                },
-                                                                                body: JSON.stringify(objetoInterno)
-                                                                            })
-            if(!response.ok){
+        try {
+            const response = await fetch("http://localhost:8080/api/interno", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(objetoInterno)
+            })
+            if (!response.ok) {
                 throw new Error("Error al enviar datos a internos");
             }
 
@@ -219,15 +245,15 @@ function ContextProvider({ children }) {
             setDatosForm({});
             //limpiamos el objeto de errores
             setError({});
-        }catch(error){
+        } catch (error) {
             console.log("Error de envio: ", error);
         }
     }
 
-    async function obtenerDatosInterno(){
-        try{
+    async function obtenerDatosInterno() {
+        try {
             const response = await fetch('http://localhost:8080/api/interno');
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al recibir datos de internos");
             }
 
@@ -236,21 +262,21 @@ function ContextProvider({ children }) {
             //almaceno los datos
             setDatosInterno(objeto);
 
-        }catch(error){
+        } catch (error) {
             console.log("Error: ", error);
         }
     }
 
     async function editarDatoInterno(id) {
-        try{
-            const response = await fetch("http://localhost:8080/api/interno/"+id, {
-                                                                                method:"PUT",
-                                                                                headers:{
-                                                                                    "content-type":"application/json"
-                                                                                },
-                                                                                body: JSON.stringify(objetoInterno)
-                                                                            })
-            if(!response.ok){
+        try {
+            const response = await fetch("http://localhost:8080/api/interno/" + id, {
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(objetoInterno)
+            })
+            if (!response.ok) {
                 throw new Error("Error al editar un interno");
             }
             //actualizamos los datos
@@ -259,33 +285,33 @@ function ContextProvider({ children }) {
             setDatosForm({});
             //limpiamos los errores
             setError({});
-        }catch(error){
+        } catch (error) {
             console.log("Error: ", error);
         }
 
     }
 
-    async function eliminarInterno(id){
-        try{
+    async function eliminarInterno(id) {
+        try {
             const response = await fetch("http://localhost:8080/api/interno/" + id, {
-                                                                            method:"DELETE",
-                                                                            headers:{
-                                                                                "content-type":"application/json"
-                                                                            }
-                                                                        })
-            if(!response.ok){
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json"
+                }
+            })
+            if (!response.ok) {
                 throw new Error("Error al eliminar interno");
             }
             //actualizamos los datos
-            await obtenerDatosInterno();  
-        }catch(error){
+            await obtenerDatosInterno();
+        } catch (error) {
             console.log("Error: ", error);
         }
     }
 
-    function obtenerCondenaAsociada(id){
+    function obtenerCondenaAsociada(id) {
         try {
-            const condena = datosCondena.find((element) => 
+            const condena = datosCondena.find((element) =>
                 element.legajo?.legajo === id
             )
             return condena;
@@ -295,7 +321,7 @@ function ContextProvider({ children }) {
     }
 
     //funcion para separar los datos antes de editar.
-    function valoresEditar(obj){
+    function valoresEditar(obj) {
         setObjetoInterno(obj);
 
         // creamos un objeto temporal
@@ -320,29 +346,29 @@ function ContextProvider({ children }) {
     /*=====================================================Funciones Delitos====================================================================*/
     /*=================================================================================================================================================*/
     async function obtenerDatosDelito() {
-        try{
+        try {
             const response = await fetch("http://localhost:8080/api/delito");
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al obtener datos de delitos");
             }
             //convertimos la respuesta en objeto
             const obj = await response.json();
             setDatosDelito(obj);
-        }catch(error){
-            console.log("Error:" , error);
+        } catch (error) {
+            console.log("Error:", error);
         }
     }
 
     async function editarDatosDelito(id) {
-        try{
+        try {
             const response = await fetch("http://localhost:8080/api/delito/" + id, {
-                                                                                    method: "PUT",
-                                                                                    headers:{
-                                                                                        "content-type":"application/json"
-                                                                                    },
-                                                                                    body: JSON.stringify(objetoDelito)
-                                                                                })
-            if(!response.ok){
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(objetoDelito)
+            })
+            if (!response.ok) {
                 throw new Error("Error al editar delito");
             }
             //limpiamos el estado de datosForm
@@ -352,25 +378,25 @@ function ContextProvider({ children }) {
             //actualizamos los datos
             await obtenerDatosDelito();
 
-        }catch(error){
+        } catch (error) {
             console.log("Error: ", error);
         }
     }
 
-    async function eliminarDelito(id){
-        try{
-            const response = await fetch("http://localhost:8080/api/delito/" + id,{
-                                                                                    method:"DELETE",
-                                                                                    headers:{
-                                                                                        "content-type":"application/json"
-                                                                                    }
-                                                                                })
-            if(!response.ok){
+    async function eliminarDelito(id) {
+        try {
+            const response = await fetch("http://localhost:8080/api/delito/" + id, {
+                method: "DELETE",
+                headers: {
+                    "content-type": "application/json"
+                }
+            })
+            if (!response.ok) {
                 throw new Error("Error al eliminar un delito");
             }
             //actualizamos los datos de delitos
             await obtenerDatosDelito();
-        }catch(error){
+        } catch (error) {
             console.log("Error: ", error)
         }
     }
@@ -378,30 +404,30 @@ function ContextProvider({ children }) {
     /*=================================================================================================================================================*/
     /*===================================================== Informes ====================================================================*/
     /*=================================================================================================================================================*/
-    async function informeIntPenDel(){
-        try{
+    async function informeIntPenDel() {
+        try {
             const response = await fetch("http://localhost:8080/api/interno/informeIntPenDel");
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al solicitar informe");
             }
             const obj = await response.json();
             setDatosInformeIntPenDel(obj);
 
-        }catch(error){
+        } catch (error) {
 
         }
     }
 
-    async function informeIntProfesion(){
-        try{
+    async function informeIntProfesion() {
+        try {
             const response = await fetch("http://localhost:8080/api/interno/informeIntProfesion");
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al solicitar informe");
             }
             const obj = await response.json();
             setDatosInformeIntProfesion(obj);
 
-        }catch(error){
+        } catch (error) {
 
         }
     }
@@ -410,46 +436,46 @@ function ContextProvider({ children }) {
     /*=====================================================Modificacion de condenas====================================================================*/
     /*=================================================================================================================================================*/
     async function obtenerDatosCondena() {
-        try{
+        try {
             const response = await fetch("http://localhost:8080/api/condena");
-            if(!response.ok){
+            if (!response.ok) {
                 throw new Error("Error al obtener datos de condena");
             }
             //convertimos la respuesta en objeto
             const obj = await response.json();
             setDatosCondena(obj);
-        }catch(error){
-            console.log("Error:" , error);
+        } catch (error) {
+            console.log("Error:", error);
         }
     }
 
     async function obtenerCondena(id) {
-        try{
+        try {
             const response = datosCondena.find(element => element.legajo?.legajo === id);
-            if(response){
+            if (response) {
                 setObjetoCondena(response);
-            }else{
+            } else {
                 throw new Error("Condena inexistente");
                 setObjetoCondena({});
             }
-            
-            
-        }catch(error){
-            console.log("Error:" , error);
+
+
+        } catch (error) {
+            console.log("Error:", error);
         }
     }
 
     async function editarDatosCondena(id) {
-        try{
+        try {
             console.log(objetoCondena)
             const response = await fetch("http://localhost:8080/api/condena/" + id, {
-                                                                                    method: "PUT",
-                                                                                    headers:{
-                                                                                        "content-type":"application/json"
-                                                                                    },
-                                                                                    body: JSON.stringify(objetoCondena)
-                                                                                })
-            if(!response.ok){
+                method: "PUT",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(objetoCondena)
+            })
+            if (!response.ok) {
                 throw new Error("Error al editar condena");
             }
             //limpiamos el estado de datosForm
@@ -458,7 +484,7 @@ function ContextProvider({ children }) {
             setError({});
             //refrezcamos los datos de condenas
             await obtenerDatosCondena();
-        }catch(error){
+        } catch (error) {
             console.log("Error: ", error);
         }
     }
@@ -479,7 +505,7 @@ function ContextProvider({ children }) {
         }
 
         //si existe "intDni" en campos proceso a hacer la validacion
-        if(campos.includes("intDni")){
+        if (campos.includes("intDni")) {
             //si existe la clave "DNI" ingresara al if para realizar la validaciòn
             if (datosForm.intDni?.trim()) {
                 //variable para verificar si existe un campo "tipo" en el objeto 
@@ -494,7 +520,7 @@ function ContextProvider({ children }) {
         }
 
         //validar direccion de penitenciaria
-        if(campos.includes("penDireccion") || campos.includes("penNom")){
+        if (campos.includes("penDireccion") || campos.includes("penNom")) {
             objeto = validarDatosPenitenciaria(objeto);
         }
 
@@ -513,12 +539,12 @@ function ContextProvider({ children }) {
         }
 
         //verificacion de sexo de interno y penitenciaria
-        if(campos.includes("intSexo")){
+        if (campos.includes("intSexo")) {
             objeto = validarSexo(objeto);
         }
 
         //si existe delDuracion hacemos la validacion
-        if(datosForm.delDuracion?.trim()){
+        if (datosForm.delDuracion?.trim()) {
             objeto = validarDuracion(objeto);
         }
 
@@ -528,41 +554,41 @@ function ContextProvider({ children }) {
     }
 
     //metodo para verificar que el nombre de las penitenciarias, las direcciones junto con localidad no coinsidan 
-    function validarDatosPenitenciaria(tmp){
+    function validarDatosPenitenciaria(tmp) {
         try {
-            const direccion = datosPenitenciaria.find((element)=>(
+            const direccion = datosPenitenciaria.find((element) => (
                 element.penDireccion === datosForm?.penDireccion && element.penEstado === "activo" && element.penLocalidad === datosForm?.penLocalidad
             ))
-            
-            const nombre = datosPenitenciaria.find((element)=>(
+
+            const nombre = datosPenitenciaria.find((element) => (
                 element.penNom === datosForm?.penNom && element.penEstado === "activo"
             ))
 
             //si no es undefined (se encontro el elemento) entra al if y carga el msj
-            if(direccion){
+            if (direccion) {
                 tmp.penDireccion = "La direccion ya existe en el registro";
             }
 
             //si no es undefined (se encontro el elemento) entra al if y carga el msj
-            if(nombre){
+            if (nombre) {
                 tmp.penNom = "El nombre ya existe en el registro";
             }
 
             return tmp;
         } catch (error) {
-            
+
         }
     }
 
-    function validarSexo(tmp){
+    function validarSexo(tmp) {
         try {
             const sexo = datosForm?.intSexo.trim();
             const penitenciaria = datosPenitenciaria.find((element) => (
                 element.idPenitenciaria === datosForm?.idPenitenciaria
             ))
             //si penitenciaria es encontrada entrará al id
-            if(penitenciaria){
-                if(sexo !== penitenciaria.penTipo)tmp.intSexo = "El genero no es permitido por la penitenciaria"
+            if (penitenciaria) {
+                if (sexo !== penitenciaria.penTipo) tmp.intSexo = "El genero no es permitido por la penitenciaria"
             }
             return tmp;
 
@@ -579,16 +605,16 @@ function ContextProvider({ children }) {
         return tmp;
     }
 
-    function validarDuracion(tmp){
-        try{
+    function validarDuracion(tmp) {
+        try {
             const duracion = datosForm.delDuracion?.trim();
 
-            if(Number(duracion) <= 0){
+            if (Number(duracion) <= 0) {
                 console.log("entro al error")
                 tmp.delDuracion = "Duracion incorrecta"
             }
             return tmp;
-        }catch(error){
+        } catch (error) {
             console.log("Error: ", error);
         }
     }
@@ -601,16 +627,16 @@ function ContextProvider({ children }) {
 
         if (!exp.test(dni)) {
             tmp.intDni = "El DNI debe contener 8 digitos númericos";
-        }else if (!legajo){
+        } else if (!legajo) {
             datosInterno.map((element) => {
-                if(element.intDni === dni){
+                if (element.intDni === dni) {
                     tmp.intDni = "El DNI ya existe en la BD"
                 }
             });
         }
 
-        
-        
+
+
 
         return tmp;
     }
@@ -629,14 +655,14 @@ function ContextProvider({ children }) {
             }
         }
         //si el legajo ya existe no debe realizar la validacion (si el legajo no contiene un valor numerico dará undefined "false")
-        if(!legajo){
+        if (!legajo) {
             datosInterno.map((element) => {
-            if(element.intDni === cuil){
-                tmp.intDni = "El CUIL ya existe en la BD"
-            }
-         })
+                if (element.intDni === cuil) {
+                    tmp.intDni = "El CUIL ya existe en la BD"
+                }
+            })
         }
-            
+
 
         return tmp;
     }
@@ -709,20 +735,23 @@ function ContextProvider({ children }) {
 
     //paso los datos y funciones a mi Context antes definido en la linea: 4
     return (
-        <Context.Provider value={{ validarForm, setDatosForm, datosForm, error, setError, setCampos, campos, 
-        datosPenitenciaria,
-        enviarDatosPenitenciaria, 
-        eliminarPenitenciaria,
-        editarPenitenciaria,
-        objetoDelito,setObjetoDelito,
-        enviarDatosInternos,
-        objetoInterno, setObjetoInterno,datosInterno,obtenerDatosInterno,eliminarInterno,editarDatoInterno,obtenerCondenaAsociada,
-        valoresEditar,
-        datosDelito,editarDatosDelito,
-        datosInformeIntPenDel, setDatosInformeIntPenDel,informeIntPenDel,
-        datosInformeIntProfesion,setDatosInformeIntProfesion, informeIntProfesion,
-        obtenerCondena,editarDatosCondena,objetoCondena,setObjetoCondena,
-        datosBuscados, legajoInput}}>
+        <Context.Provider value={{
+            validarForm, setDatosForm, datosForm, error, setError, setCampos, campos,
+            datosPenitenciaria,
+            enviarDatosPenitenciaria,
+            eliminarPenitenciaria,
+            editarPenitenciaria,
+            objetoDelito, setObjetoDelito,
+            enviarDatosInternos,
+            objetoInterno, setObjetoInterno, datosInterno, obtenerDatosInterno, eliminarInterno, editarDatoInterno, obtenerCondenaAsociada,
+            valoresEditar,
+            datosDelito, editarDatosDelito,
+            datosInformeIntPenDel, setDatosInformeIntPenDel, informeIntPenDel,
+            datosInformeIntProfesion, setDatosInformeIntProfesion, informeIntProfesion,
+            obtenerCondena, editarDatosCondena, objetoCondena, setObjetoCondena,
+            datosBuscados, legajoInput,
+            login,logout,isAuthenticated
+        }}>
             {children}
         </Context.Provider>
     )
