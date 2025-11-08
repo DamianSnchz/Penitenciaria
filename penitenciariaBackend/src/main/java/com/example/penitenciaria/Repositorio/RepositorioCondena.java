@@ -5,7 +5,9 @@
 package com.example.penitenciaria.Repositorio;
 
 import com.example.penitenciaria.Entity.Condena;
+import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -15,4 +17,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RepositorioCondena extends JpaRepository<Condena, Long>{
     
+    @Query("SELECT c FROM Condena c WHERE c.legajo.legajo = :legajo")
+    public Optional<Condena> buscarPorLegajo(Long legajo);
 }

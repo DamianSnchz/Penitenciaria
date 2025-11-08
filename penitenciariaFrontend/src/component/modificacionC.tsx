@@ -6,19 +6,22 @@ function ModificacionC() {
     const  {obtenerCondena, editarDatosCondena, objetoCondena, setCampos,error, setDatosForm, datosForm, validarForm,setObjetoCondena} = useCartContext();
     const [legajo, setLegajo] = useState(0)
     const [errorL, setErroL] = useState("");
-    let datos: InterfaceCondena = objetoCondena;
+    const[datos, setDatos] = useState<InterfaceCondena>();
 
     useEffect(()=>{
        setCampos(["conTiempoRedCond", "conMotRedPena"]); 
     },[])
 
     useEffect(()=>{
-        datos = {...objetoCondena};
+        setDatos({...objetoCondena});
     },[objetoCondena])
 
     function handlerChange(e: any){
-        setDatosForm({...datosForm, [e.target.name]: e.target.value})
-        setObjetoCondena({...objetoCondena, [e.target.name]: e.target.value})
+        let valor: any = e.target.value;
+        
+
+        setDatosForm({...datosForm, [e.target.name]: valor})
+        setObjetoCondena({...objetoCondena, [e.target.name]: valor})
         if(e.target.name === "legajo")setLegajo(e.target.value);
     }
 
@@ -26,8 +29,12 @@ function ModificacionC() {
         try{
             const legajoNum = Number(legajo);
             if(!isNaN(legajoNum) && legajoNum > 0 ){
-                setErroL("");
-                obtenerCondena(legajoNum);
+                if(datos?.conEstado === "activo"){
+                    setErroL("");
+                    obtenerCondena(legajoNum);
+                }else{
+                    setErroL("Condena dada de baja")
+                }
             }else {
                  setErroL("Debe ingresar un número");
             }
@@ -39,7 +46,8 @@ function ModificacionC() {
     function validarDatos(){
         const valor = validarForm();
         if(valor){
-            editarDatosCondena(datos.idCondena);
+            editarDatosCondena(datos?.idCondena);
+            setObjetoCondena({});
         }
     }
 
@@ -55,7 +63,7 @@ function ModificacionC() {
                 <br />
                 <div className="d-flex flex-column mb-4">
                     <label className="form-label" htmlFor="legajo">Ingrese Legajo</label>
-                    <input type="number" className="w-50" id="legajo" name="legajo" onChange={handlerChange}/>
+                    <input type="number" className="w-50" id="legajo" name="legajo" value={String(datos?.legajo ?? "") ?? ""} onChange={handlerChange}/>
                     <span className="error">{errorL}</span>
                 </div>
                 <button className="btn btn-primary" type="submit" onClick={()=>{validarLegajo()}}>
@@ -66,17 +74,21 @@ function ModificacionC() {
                 <div className="row my-4">
                     <div className="col-5 border-top border-light">
                         <h6 className="text-secondary">Nombre del interno</h6>
-                        <b className="text-light">{String(datos.legajo?.intNombre ?? "") + " " + String(datos.legajo?.intApellido ?? "")}</b>
+                        <b className="text-light">{datos?.conEstado === "activo" ? String(datos?.legajo?.intNombre ?? "") + " " + String(datos?.legajo?.intApellido ?? "") : null}</b>
                     </div>
                     <div className="col-6 border-top border-light ms-5">
                         <h6 className="text-secondary">Delito</h6>
-                        <b className="text-light">{datos.idDelido?.delDelito ?? ""}</b>
+                        <b className="text-light">{datos?.conEstado === "activo" ? datos?.idDelito?.delDelito ?? "": null}</b>
                     </div>
                 </div>
                 <div className="row mt-3">
                     <div className="col-5 border-top border-light">
                         <h6 className="text-secondary">Condena actual</h6>
-                        <b className="text-light">{datos.conDuracion ?? ""}</b>
+                        <b className="text-light">{datos?.conEstado === "activo" ? datos?.conDuracion ?? "" : null}</b>
+                    </div>
+                    <div className="col-6 border-top border-light ms-5">
+                        <h6 className="text-secondary">Fecha Fin de Condena</h6>
+                        <b className="text-light">{datos?.conEstado === "activo" ? String(datos?.conFechFinCon ?? "") ?? "":null}</b>
                     </div>
                 </div>
                 <br />
@@ -84,12 +96,12 @@ function ModificacionC() {
                 <div className="d-flex w-100 justify-content-start my-4">
                     <div className="border-top border-light w-50">
                         <h6 className="text-secondary">Motivo de Reducción de Pena</h6>
-                        <input type="text" id="conMotRedPena" name="conMotRedPena" className="w-100" onChange={handlerChange}/>
+                        <input type="text" id="conMotRedPena" name="conMotRedPena" className="w-100" value={datos?.conEstado === "activo" ?String(datos?.conMotRedPena ?? "") ?? "":""} onChange={handlerChange}/>
                         {error.conMotRedPena && <span className="error">{error.conMotRedPena}</span>}
                     </div>
                     <div className="border-top border-light w-50 ms-5">
                         <h6 className="text-secondary">Tiempo de Reducción de Pena</h6>
-                        <input type="text" className="w-100" id="conTiempoRedCond" name="conTiempoRedCond" onChange={handlerChange}/>
+                        <input type="number" className="w-100" id="conTiempoRedCond" name="conTiempoRedCond" value={datos?.conEstado === "activo" ? String(datos?.conTiempoRedCond ?? "") ?? "": ""} onChange={handlerChange}/>
                         {error.conTiempoRedCond && <span className="error">{error.conTiempoRedCond}</span>}
                     </div>
                 </div>

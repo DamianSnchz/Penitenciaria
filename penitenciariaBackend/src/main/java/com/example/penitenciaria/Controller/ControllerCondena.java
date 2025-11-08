@@ -6,6 +6,7 @@ package com.example.penitenciaria.Controller;
 
 import com.example.penitenciaria.Entity.Condena;
 import com.example.penitenciaria.Services.ServiceCondena;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @CrossOrigin(origins = "*")
-@RequestMapping
+@RequestMapping("/api/condena")
 public class ControllerCondena {
     
     @Autowired
@@ -39,7 +40,20 @@ public class ControllerCondena {
     
     @PutMapping("/{id}")
     public void editar(@PathVariable Long id, @RequestBody Condena condena){
+        Integer duracion, tiempoReducido;
+        duracion = condena.getConDuracion();
+        tiempoReducido = condena.getConTiempoRedCond();
+        //decremento la duracion con el tiempo reducido
+        duracion = duracion - tiempoReducido;
+        //me aseguro de que sea la condena correcta
         condena.setIdCondena(id);
+        //obtengo la nueva fecha
+        LocalDate fecha = servicio.calcularFinCondena(duracion,condena.getConFechIniCon());
+        //modifico la duracion
+        condena.setConDuracion(duracion);
+        //modifico fecha de fin de condena
+        condena.setConFechFinCon(fecha);
+        //guardo la condena
         servicio.guardar(condena);
     }
     

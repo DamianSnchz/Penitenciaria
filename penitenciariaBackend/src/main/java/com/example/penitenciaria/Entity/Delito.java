@@ -28,14 +28,14 @@ public class Delito {
     private String delEstado = "activo";
 
     @Column(name = "delDuracion", nullable = false)
-    private Long delDuracion; // En días, meses o años según tu modelo lógico
+    private Integer delDuracion; // En días, meses o años según tu modelo lógico
 
     // ===== CONSTRUCTORES =====
     public Delito() {
     }
 
     public Delito(Long idDelito, String delito, String juez, LocalDate fechaDetencion,
-            LocalDate fechaInicioCondena, String estado, Long duracion) {
+            LocalDate fechaInicioCondena, String estado, Integer duracion) {
         this.idDelito = idDelito;
         this.delDelito = delito;
         this.delJuez = juez;
@@ -94,11 +94,11 @@ public class Delito {
         this.delEstado = delEstado;
     }
 
-    public Long getDelDuracion() {
+    public Integer getDelDuracion() {
         return delDuracion;
     }
 
-    public void setDelDuracion(Long delDuracion) {
+    public void setDelDuracion(Integer delDuracion) {
         this.delDuracion = delDuracion;
     }
 }

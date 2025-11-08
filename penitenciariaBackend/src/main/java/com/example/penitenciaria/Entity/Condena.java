@@ -1,8 +1,7 @@
 package com.example.penitenciaria.Entity;
 
 import jakarta.persistence.*;
-import java.util.Date;
-
+import java.time.LocalDate;
 @Entity
 @Table(name = "condenas")
 public class Condena {
@@ -27,20 +26,20 @@ public class Condena {
 
     @Temporal(TemporalType.DATE)
     @Column(name = "conFechFinCon")
-    private Date conFechFinCon;
+    private LocalDate conFechFinCon;
 
     @Column(name = "conMotRedPena", length = 200)
     private String conMotRedPena;
 
     @Column(name = "conTiempoRedCond")
-    private Long conTiempoRedCond;
+    private Integer conTiempoRedCond;
 
     @Column(name = "conEstado", length = 8, nullable = false)
     private String conEstado = "activo";
 
     @Temporal(TemporalType.DATE)
     @Column(name = "conFechIniCon")
-    private Date conFechIniCon;
+    private LocalDate conFechIniCon;
 
     // 🔸 Constructores
     public Condena() {
@@ -85,11 +84,11 @@ public class Condena {
         this.conDuracion = conDuracion;
     }
 
-    public Date getConFechFinCon() {
+    public LocalDate getConFechFinCon() {
         return conFechFinCon;
     }
 
-    public void setConFechFinCon(Date conFechFinCon) {
+    public void setConFechFinCon(LocalDate conFechFinCon) {
         this.conFechFinCon = conFechFinCon;
     }
 
@@ -101,11 +100,11 @@ public class Condena {
         this.conMotRedPena = conMotRedPena;
     }
 
-    public Long getConTiempoRedCond() {
+    public Integer getConTiempoRedCond() {
         return conTiempoRedCond;
     }
 
-    public void setConTiempoRedCond(Long conTiempoRedCond) {
+    public void setConTiempoRedCond(Integer conTiempoRedCond) {
         this.conTiempoRedCond = conTiempoRedCond;
     }
 
@@ -117,11 +116,11 @@ public class Condena {
         this.conEstado = conEstado;
     }
 
-    public Date getConFechIniCon() {
+    public LocalDate getConFechIniCon() {
         return conFechIniCon;
     }
 
-    public void setConFechIniCon(Date conFechIniCon) {
+    public void setConFechIniCon(LocalDate conFechIniCon) {
         this.conFechIniCon = conFechIniCon;
     }
 }

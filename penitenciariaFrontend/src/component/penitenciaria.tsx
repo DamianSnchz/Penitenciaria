@@ -12,7 +12,7 @@ function Penitenciaria() {
     const { validarForm, datosForm, setDatosForm, setCampos, error, datosPenitenciaria,enviarDatosPenitenciaria, eliminarPenitenciaria,editarPenitenciaria} = useCartContext();
 
     useEffect(() => {
-        setCampos(["penNom", "penCapacidad", "penDireccion", "penTipo"]);
+        setCampos(["penNom", "penCapacidad", "penDireccion", "penTipo", "penLocalidad"]);
 
         return () => {
             setCampos([]);
@@ -66,6 +66,11 @@ function Penitenciaria() {
                             {error.penNom && <span className="error">{error.penNom}</span>}
                         </div>
                         <div className="d-flex flex-column mb-4">
+                            <label className="form-label" htmlFor="penLocalidad">Localidad</label>
+                            <input type="text" className="w-50" id="penLocalidad" name="penLocalidad" onChange={handleChange} value={datosForm?.penLocalidad ?? ""} />
+                            {error.penLocalidad && <span className="error">{error.penLocalidad}</span>}
+                        </div>
+                        <div className="d-flex flex-column mb-4">
                             <label className="form-label" htmlFor="penDireccion">Dirección</label>
                             <input type="text" className="w-50" id="penDireccion" name="penDireccion" onChange={handleChange} value={datosForm?.penDireccion ?? ""} />
                             {error.penDireccion && <span className="error">{error.penDireccion}</span>}
@@ -79,9 +84,8 @@ function Penitenciaria() {
                             <label className="form-label" htmlFor="penTipo">Tipo</label>
                             <select className="w-50" aria-label="x" id="penTipo" name="penTipo" onChange={handleChange} value={datosForm?.penTipo ?? ""}>
                                 <option value="" >Seleccione Tipo</option>
-                                <option value="Hombres">Hombres</option>
-                                <option value="Mujeres">Mujeres</option>
-                                <option value="Mixto">Mixto</option>
+                                <option value="M">Hombres</option>
+                                <option value="F">Mujeres</option>
                             </select>
                             {error.penTipo && <span className="error">{error.penTipo}</span>}
                         </div>
@@ -97,6 +101,7 @@ function Penitenciaria() {
                         <tr>
                             <th scope="col">ID</th>
                             <th scope="col">Nombre</th>
+                            <th scope="col">Localidad</th>
                             <th scope="col">Dirección</th>
                             <th scope="col">Capacidad</th>
                             <th scope="col">Tipo</th>
@@ -109,6 +114,7 @@ function Penitenciaria() {
                             <tr key={e.idPenitenciaria}>
                                 <th scope="row">{e.idPenitenciaria}</th>
                                 <td>{e.penNom}</td>
+                                <td>{e.penLocalidad}</td>
                                 <td>{e.penDireccion}</td>
                                 <td>{e.penCapacidad}</td>
                                 <td>{e.penTipo}</td>

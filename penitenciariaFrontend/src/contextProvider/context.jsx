@@ -52,11 +52,16 @@ function ContextProvider({ children }) {
         obtenerDatosPenitenciaria();
         obtenerDatosInterno();
         obtenerDatosDelito();
+        obtenerDatosCondena();
     }, [])
 
     useEffect(() => {
         obtenerDatosDelito();
     }, [datosInterno])
+
+    useEffect(() => {
+        obtenerDatosCondena();
+    }, [datosInterno, datosDelito])
 
     // funcion de busqueda filtrado
     /*const buscarDatos = (ev) => {
@@ -114,8 +119,10 @@ function ContextProvider({ children }) {
             }
             // convertir la peticion en objeto
             const objeto = await response.json();
+            //almaceno solo los datos activos
+            const penitenciariaActivas = objeto.filter((element) => (element.penEstado === "activo"))
             // guardar los datos obtenidos 
-            setDatosPenitenciaria(objeto);
+            setDatosPenitenciaria(penitenciariaActivas);
         }catch(error){
             console.log("Error: " + error);
         }
@@ -276,6 +283,17 @@ function ContextProvider({ children }) {
         }
     }
 
+    function obtenerCondenaAsociada(id){
+        try {
+            const condena = datosCondena.find((element) => 
+                element.legajo?.legajo === id
+            )
+            return condena;
+        } catch (error) {
+            console.log("Error al obtener condena asociada: ", error);
+        }
+    }
+
     //funcion para separar los datos antes de editar.
     function valoresEditar(obj){
         setObjetoInterno(obj);
@@ -423,12 +441,13 @@ function ContextProvider({ children }) {
 
     async function editarDatosCondena(id) {
         try{
+            console.log(objetoCondena)
             const response = await fetch("http://localhost:8080/api/condena/" + id, {
                                                                                     method: "PUT",
                                                                                     headers:{
                                                                                         "content-type":"application/json"
                                                                                     },
-                                                                                    body: JSON.stringify(datosCondena)
+                                                                                    body: JSON.stringify(objetoCondena)
                                                                                 })
             if(!response.ok){
                 throw new Error("Error al editar condena");
@@ -437,7 +456,8 @@ function ContextProvider({ children }) {
             setDatosForm({});
             //limpiamos el estado de errores
             setError({});
-
+            //refrezcamos los datos de condenas
+            await obtenerDatosCondena();
         }catch(error){
             console.log("Error: ", error);
         }
@@ -473,6 +493,10 @@ function ContextProvider({ children }) {
             }
         }
 
+        //validar direccion de penitenciaria
+        if(campos.includes("penDireccion") || campos.includes("penNom")){
+            objeto = validarDatosPenitenciaria(objeto);
+        }
 
         //verificamos si fecha es distinto de null
         if (fecha) {
@@ -488,6 +512,11 @@ function ContextProvider({ children }) {
             });
         }
 
+        //verificacion de sexo de interno y penitenciaria
+        if(campos.includes("intSexo")){
+            objeto = validarSexo(objeto);
+        }
+
         //si existe delDuracion hacemos la validacion
         if(datosForm.delDuracion?.trim()){
             objeto = validarDuracion(objeto);
@@ -496,6 +525,50 @@ function ContextProvider({ children }) {
         setError(objeto);
 
         return Object.keys(objeto).length === 0;
+    }
+
+    //metodo para verificar que el nombre de las penitenciarias, las direcciones junto con localidad no coinsidan 
+    function validarDatosPenitenciaria(tmp){
+        try {
+            const direccion = datosPenitenciaria.find((element)=>(
+                element.penDireccion === datosForm?.penDireccion && element.penEstado === "activo" && element.penLocalidad === datosForm?.penLocalidad
+            ))
+            
+            const nombre = datosPenitenciaria.find((element)=>(
+                element.penNom === datosForm?.penNom && element.penEstado === "activo"
+            ))
+
+            //si no es undefined (se encontro el elemento) entra al if y carga el msj
+            if(direccion){
+                tmp.penDireccion = "La direccion ya existe en el registro";
+            }
+
+            //si no es undefined (se encontro el elemento) entra al if y carga el msj
+            if(nombre){
+                tmp.penNom = "El nombre ya existe en el registro";
+            }
+
+            return tmp;
+        } catch (error) {
+            
+        }
+    }
+
+    function validarSexo(tmp){
+        try {
+            const sexo = datosForm?.intSexo.trim();
+            const penitenciaria = datosPenitenciaria.find((element) => (
+                element.idPenitenciaria === datosForm?.idPenitenciaria
+            ))
+            //si penitenciaria es encontrada entrará al id
+            if(penitenciaria){
+                if(sexo !== penitenciaria.penTipo)tmp.intSexo = "El genero no es permitido por la penitenciaria"
+            }
+            return tmp;
+
+        } catch (error) {
+            console.log("Error al verificar sexo: ", error)
+        }
     }
 
     function inputVacios(tmp) {
@@ -643,9 +716,7 @@ function ContextProvider({ children }) {
         editarPenitenciaria,
         objetoDelito,setObjetoDelito,
         enviarDatosInternos,
-        objetoInterno, setObjetoInterno,
-        datosInterno,obtenerDatosInterno,
-        eliminarInterno,editarDatoInterno,
+        objetoInterno, setObjetoInterno,datosInterno,obtenerDatosInterno,eliminarInterno,editarDatoInterno,obtenerCondenaAsociada,
         valoresEditar,
         datosDelito,editarDatosDelito,
         datosInformeIntPenDel, setDatosInformeIntPenDel,informeIntPenDel,

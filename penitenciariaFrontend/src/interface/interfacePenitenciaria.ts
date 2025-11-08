@@ -4,5 +4,6 @@ export interface InterfacePenitenciaria{
     penDireccion:string;
     penTipo:string;
     penCapacidad: number;
+    penLocalidad: String;
     penEstado: string;
 }

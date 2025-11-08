@@ -4,10 +4,11 @@ import {InterfaceInterno} from "./interfaceInternos"
 export interface InterfaceCondena{
     idCondena: number;
     legajo: InterfaceInterno;
-    idDelido: InterfaceDelito;
+    idDelito: InterfaceDelito;
     conDuracion: number;
     conFechFinCon: Date;
     conMotRedPena: String;
     conTiempoRedCond: number;
     conFechIniCon: Date;
+    conEstado:String;
 }

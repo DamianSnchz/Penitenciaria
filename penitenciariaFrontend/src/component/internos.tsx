@@ -12,7 +12,7 @@ import  {InterfaceInterno} from "../interface/interfaceInternos.ts";
 
 function Internos() {
 	//función compartida del proveedor de datos
-	const { validarForm, datosForm, setDatosForm, error, setError, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar} = useCartContext();
+	const { validarForm, datosForm, setDatosForm, error, setError, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar,obtenerCondenaAsociada} = useCartContext();
 
 
 	
@@ -241,30 +241,38 @@ function Internos() {
 							<th scope="col">Fecha de Nacimiento</th>
 							<th scope="col">Delito</th>
 							<th scope="col">Penitenciaria</th>
+							<th scope="col">Fecha Fin de Condena</th>
 							<th scope="col">Acciones</th>
 						</tr>
 					</thead>
 					<tbody>
-						{datosInterno.map((i: InterfaceInterno) => (
-							i.intEstado === "activo" ?
-							<tr key={i.legajo}>
-								<th scope="row">{i.legajo}</th>
-								<td>{i.intNombre}</td>
-								<td>{i.intApellido}</td>
-								<td>{i.intDni}</td>
-								<td>{String(i.intFechNac)}</td>
-								<td>{i.idDelito.delDelito}</td>
-								<td>{i.idPenitenciaria.penNom}</td>
-								<td>
-									<button className="btn btn-primary btn-sm me-2" onClick={()=> valoresEditar(i)}>
-                                        Editar
-                                    </button>
-                                    <button className="btn btn-danger btn-sm" onClick={()=> eliminarInterno(i.legajo)}>
-                                        Eliminar
-                                    </button>
-								</td>
-							</tr> : "" 
-						))}
+    					{datosInterno.map((i: InterfaceInterno) => {
+        					//buscamos la condena asociada
+        					const condena = obtenerCondenaAsociada(i.legajo);
+							//Retornar el JSX
+        					return ( 
+            					i.intEstado === "activo" ?
+            					<tr key={i.legajo}>
+                					<th scope="row">{i.legajo}</th>
+                					<td>{i.intNombre}</td>
+                					<td>{i.intApellido}</td>
+                					<td>{i.intDni}</td>
+                					<td>{String(i.intFechNac)}</td>
+                					<td>{i.idDelito.delDelito}</td>
+                					<td>{i.idPenitenciaria.penNom}</td>
+                					<td>{condena?.conFechFinCon}</td>
+                					<td>
+                    					<button className="btn btn-primary btn-sm me-2" onClick={()=> valoresEditar(i)}>
+                        					Editar
+                    					</button>
+                    					<button className="btn btn-danger btn-sm" onClick={()=> eliminarInterno(i.legajo)}>
+                        					Eliminar
+                    					</button>
+                					</td>
+            					</tr> 
+            					: null
+        					);
+    					})} 
 					</tbody>
 				</table>
 				<br />
