@@ -1,6 +1,32 @@
-
+import { useEffect, useState } from "react";
+import { useCartContext } from "../contextProvider/context.jsx"
+import { InterfaceInformeFecha } from "../interface/interfaceInformeFecha.ts";
 
 function InformeFC() {
+    const { setDatosInformePorFecha,datosInformePorFecha, informeXFecha,setCampos, validarForm, setDatosForm, datosForm, error,formatoFecha} = useCartContext();
+    
+    useEffect(()=>{
+        setCampos(["fechaInforme"]);
+        return () =>{
+            setDatosInformePorFecha([]);
+        }
+    },[])
+
+    function changeHandler(e:any){
+        const value = e.target.value;
+        setDatosForm({...datosForm, [e.target.name] : value});
+        setDatosInformePorFecha([]);
+    }
+
+    function onSubmit(){
+        const valor = validarForm(["fechaInforme"]);
+        if(valor){
+            informeXFecha(datosForm.fechaInforme);
+        }
+    }
+
+
+
     return (
         <div className="container-component">
             <article>
@@ -12,58 +38,40 @@ function InformeFC() {
                 </div>
                 <br />
                 <div className="d-flex flex-column mb-4">
-                            <label className="form-label" >Fecha de corte</label>
-                            <input type="date" className="w-50"/>
-                        </div>
-                <button className="btn btn-primary" type="submit">
+                    <label className="form-label" htmlFor="fechaInforme">Fecha de corte</label>
+                    <input type="date" className="w-50" name="fechaInforme" id="fechaInforme" onChange={changeHandler}/>
+                    {error.fechaInforme && <span className="error">{error.fechaInforme}</span>}
+                </div>
+                <button className="btn btn-primary" type="submit" onClick={onSubmit}>
                     Generar informe
                 </button>
                 <br /><br />
                 <table className="table mb-2">
                     <thead>
                         <tr>
-                            <th scope="col">ID</th>
-                            <th scope="col">Nombre</th>
-                            <th scope="col">Dirección</th>
-                            <th scope="col">Capacidad</th>
-                            <th scope="col">Tipo</th>
-                            <th scope="col">Acciones</th>
+                            <th scope="col">Penitenciaria</th>
+                            <th scope="col">Delito</th>
+                            <th scope="col">Nombre y Apellido</th>
+                            <th scope="col">Dni/Cuil</th>
+                            <th scope="col">Fecha Inicio Condena</th>
+                            <th scope="col">Fecha Fin Condena</th>
+                            <th scope="col">Fecha Consulta</th>
+                            <th scope="col">Condena Cumplida</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Penitenciaria girasoles</td>
-                            <td>Av Belgrano 1444</td>
-                            <td>580</td>
-                            <td>Masculino</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Penitenciaria girasoles</td>
-                            <td>Av Belgrano 1444</td>
-                            <td>580</td>
-                            <td>Masculino</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th scope="row">23223</th>
-                            <td>Penitenciaria girasoles</td>
-                            <td>Av Belgrano 1444</td>
-                            <td>580</td>
-                            <td>Masculino</td>
-                            <td><button className="btn btn-outline-secondary btn-sm">
-                                Editar
-                            </button>
-                            </td>
-                        </tr>
+                        {datosInformePorFecha.map((i: InterfaceInformeFecha, index: number) => (
+                            <tr key={index}>
+                                <th>{i.penitenciaria}</th>
+                                <td>{i.delito}</td>
+                                <td>{i.name + " " + i.apellido}</td>
+                                <td>{i.dni}</td>
+                                <td>{formatoFecha(i.fechaInicio)}</td>
+                                <td>{formatoFecha(i.fechaFin)}</td>
+                                <td>{formatoFecha(i.fechaIngresada)}</td>
+                                <td>{i.porcentaje.toFixed(2) + "%"}</td>
+                            </tr>
+                        ))}
                     </tbody>
                 </table>
                 <br />

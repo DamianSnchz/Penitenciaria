@@ -3,7 +3,7 @@ import {useCartContext} from "../contextProvider/context";
 
 
 function InformeRP() {
-    const {datosInformeIntProfesion,informeIntProfesion } = useCartContext();
+    const {datosInformeIntProfesion,informeIntProfesion, formatoFecha} = useCartContext();
 
     return (
         <div className="container-component">
@@ -35,7 +35,7 @@ function InformeRP() {
                             <th scope="row">{element.intProfesion}</th>
                             <td>{element.intNombre}</td>
                             <td>{element.intApellido}</td>
-                            <td>{String(element.intFechNac)}</td>
+                            <td>{formatoFecha(element.intFechNac)}</td>
                             <td>{element.intDni}</td>
                         </tr>
                         ))}

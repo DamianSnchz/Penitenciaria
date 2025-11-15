@@ -28,7 +28,7 @@ public class Delito {
     private String delEstado = "activo";
 
     @Column(name = "delDuracion", nullable = false)
-    private Integer delDuracion; // En días, meses o años según tu modelo lógico
+    private Integer delDuracion = 0; // En días, meses o años según tu modelo lógico
 
     // ===== CONSTRUCTORES =====
     public Delito() {

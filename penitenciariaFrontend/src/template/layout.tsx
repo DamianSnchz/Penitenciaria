@@ -20,7 +20,7 @@ function Layout({ children }: LayoutProps) {
     return (
         <div className="layout-container">
             <NavBar/>
-            <main className="w-100 mx-5">
+            <main className="w-100 px-4">
                 <Outlet/>
             </main>
         </div>

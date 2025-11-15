@@ -95,7 +95,7 @@ function RegistrarD() {
                             {error.delFechIniCondena && <span className="error">{error.delFechIniCondena}</span>}
                         </div>
                         <div className="d-flex flex-column mb-4">
-                            <label className="form-label" htmlFor="delDuracion">Duración de Condena</label>
+                            <label className="form-label" htmlFor="delDuracion">Duración de Condena en Meses</label>
                             <input type="number" className="w-50" id="delDuracion" name="delDuracion" onChange={handleChange} value={datosForm?.delDuracion ?? ""}/>
                             {error.delDuracion && <span className="error">{error.delDuracion}</span>}
                         </div>
@@ -103,7 +103,7 @@ function RegistrarD() {
                             <button className="btn btn-primary mx-2" type="submit">
                                 Continuar
                             </button>
-                            <button className="btn btn-outline-secondary" type="button" onClick={()=>{setDatosForm({}); setError({}); datosForm.idDelito ? navegar("/delitos") : setTimeout(()=>{navegar("/internos")},1000)}}>
+                            <button className="btn btn-secondary" type="button" onClick={()=>{setDatosForm({}); setError({}); datosForm.idDelito ? navegar("/delitos") : setTimeout(()=>{navegar("/internos")},1000)}}>
                                 Cancelar
                             </button>
                         </div>

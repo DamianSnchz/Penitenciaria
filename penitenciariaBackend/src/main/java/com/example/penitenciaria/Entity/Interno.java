@@ -21,7 +21,7 @@ public class Interno {
     @Column(name = "intTipo", length = 4, nullable = false)
     private String intTipo;
 
-    @Column(name = "intDni", unique = true, nullable = false)
+    @Column(name = "intDni", nullable = false)
     private String intDni;
 
     @Column(name = "intSexo", length = 1, nullable = false)

@@ -9,6 +9,7 @@
   --font-size-14: 14px; 
   --font-size-16: 16px;
   --font-size-18: 18px;
+  --font-size-20: 20px;
   --font-size-24: 24px;
   --font-size-32: 32px; 
 }
@@ -29,6 +30,11 @@ body {
   font-family: var(--font-family);
 }
 
+main {
+  height: fit-content;
+  border-left: solid 1px;
+  min-height: 100%;
+}
 
 
 

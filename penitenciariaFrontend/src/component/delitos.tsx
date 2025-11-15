@@ -1,16 +1,28 @@
+import { useEffect } from "react";
 import { useCartContext } from "../contextProvider/context"
 //importamos interface delito
-import {InterfaceDelito} from "../interface/interfaceDelito"
+import { InterfaceDelito } from "../interface/interfaceDelito"
 
-import { useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 function Delitos() {
     //uso del context
-    const {datosDelito, setObjetoDelito, setDatosForm} = useCartContext();
+    const { usuario, formatoFecha, datosDelito, setObjetoDelito, setDatosForm, filterDelito, obtenerDatosDelito } = useCartContext();
 
     const navegar = useNavigate();
 
-    function irRegistrarDelito(){
+    useEffect(() => {
+        return () => {
+            //para refrescar datos en caso de que no refrescan con el mismo filtrado
+            obtenerDatosDelito();
+        }
+    }, [])
+
+    function handleChange(e: any) {
+        filterDelito(e.target.value);
+    }
+
+    function irRegistrarDelito() {
         navegar("/registrarDelito");
     }
 
@@ -23,11 +35,11 @@ function Delitos() {
                         Modificar y gestionar datos de los delitos cometidos por los internos, incluyendo información del juez que dicto el delito.
                     </h4>
                 </div>
-                <br/>
+                <br />
                 <div className="input-container">
                     <div className="w-100">
-                        <label className="form-label">Buscar Delito</label>
-                        <input className="w-50" type="text"/>
+                        <label className="form-label" htmlFor="filter">Buscar Delito</label>
+                        <input className="w-50" id="filter" name="filter" type="number" onChange={handleChange} />
                     </div>
                 </div>
                 <h2>Internos Existentes</h2>
@@ -44,22 +56,21 @@ function Delitos() {
                         </tr>
                     </thead>
                     <tbody>
-                        {datosDelito.map((d: InterfaceDelito)=>(
-                            d.delEstado === "activo" ?
-                                 <tr key={d.idDelito}>
+                        {datosDelito.map((d: InterfaceDelito) => (
+                            <tr key={d.idDelito}>
                                 <th scope="row">{d.idDelito}</th>
                                 <td>{d.delDelito}</td>
                                 <td>{d.delJuez}</td>
-                                <td>{String(d.delFechDet)}</td>
-                                <td>{String(d.delFechIniCondena)}</td>
-                                <td>{d.delDuracion}</td>
+                                <td>{formatoFecha(d.delFechDet)}</td>
+                                <td>{formatoFecha(d.delFechIniCondena)}</td>
+                                <td>{d.delDuracion + " meses"}</td>
                                 <td>
-                                    <button className="btn btn-primary btn-sm" onClick={()=> {setDatosForm(d); irRegistrarDelito()}} >
+                                    <button className={`btn btn-primary btn-sm ${usuario.usuRol === "juez" || usuario.usuRol === "master" ? "" : "disabled"}`} onClick={() => { setDatosForm(d); irRegistrarDelito() }} >
                                         Editar
                                     </button>
                                 </td>
                             </tr>
-                        : ""))}
+                        ))}
                     </tbody>
                 </table>
                 <br />

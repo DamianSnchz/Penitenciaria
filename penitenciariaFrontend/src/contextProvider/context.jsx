@@ -11,6 +11,8 @@ export const useCartContext = () => useContext(Context);
 
 //Proveedor de datos y funciones
 function ContextProvider({ children }) {
+    //estado para almacenar el usuario logeado
+    const [usuario, setUsuario] = useState({});
     //estados para almacenar el objeto delitos
     const [objetoDelito, setObjetoDelito] = useState({});
     //estado para almacenar el objeto interno
@@ -27,6 +29,8 @@ function ContextProvider({ children }) {
     const [datosInformeIntPenDel, setDatosInformeIntPenDel] = useState([]);
     //estado para almacenar informe de internos por profesion
     const [datosInformeIntProfesion, setDatosInformeIntProfesion] = useState([]);
+    //estado para almacenar informe por fecha
+    const [datosInformePorFecha, setDatosInformePorFecha] = useState([]);
     //variable para almacenar los datos de condenas provenientes de la petición GET
     const [datosCondena, setDatosCondena] = useState([]);
     // almacena los datos buscados, es utilizado en buscarDatos()
@@ -91,23 +95,51 @@ function ContextProvider({ children }) {
     /*==================== Funciones de Autenticación =================*/
     /*=================================================================*/
 
-    
-    function login(usuario, password) {
-        if (usuario === "admin" && password === "1234") {
-            setIsAuthenticated(true); // ¡Marca al usuario como logueado!
-            setDatosForm({}); // Limpia el formulario
-            setError({}); // Limpia errores
-            return true; // Devuelve éxito
-        } else {
-            setError({ general: "Usuario o contraseña incorrectos" });
-            return false; // Devuelve fracaso
+
+    async function login() {
+        try {
+            const response = await fetch("http://localhost:8080/api/usuario/login", {
+                method: "POST",
+                headers: {
+                    "content-type": "application/json"
+                },
+                body: JSON.stringify(datosForm)
+            });
+
+            if (!response.ok) {
+                const errorResponse = await response.json();
+                throw new Error(errorResponse.error);
+            }
+
+            const objeto = await response.json();
+            if (objeto) {
+                //almaceno el objeto usuario
+                setUsuario(objeto);
+                setIsAuthenticated(true); // ¡Marca al usuario como logueado!
+                setDatosForm({}); // Limpia el formulario
+                setError({}); // Limpia errores
+                return true; // Devuelve éxito
+            } else {
+                throw new Error("Error al obtener un usuario");
+            }
+        } catch (error) {
+            //se muestra el error emitido por el backend (en caso de no encontrar el usuario)
+            console.log("Error: ", error.message)
+            setError({ general: error.message });
+
+            return false;
         }
     }
 
-    
+
+
+    //para el cierre de sesion
     function logout() {
         setIsAuthenticated(false);
     }
+    /*=================================================================*/
+    /*==================== Funciones de busqueda ======================*/
+    /*=================================================================*/
 
     const buscarLegajo = (evento) => {
         //realizo una busqueda de legajo con los datos obtenidos de internos
@@ -118,8 +150,43 @@ function ContextProvider({ children }) {
                     return element;
                 }
             })
-
             setDatosBuscados(response);
+        } catch (error) {
+            console.log("Error al filtrar datos: ", error);
+        }
+    }
+
+    const buscarLegajoInterno = (evento) => {
+        //realizo una busqueda de legajo con los datos obtenidos de internos
+        try {
+            if (!isNaN(evento) && evento > 0) {
+                const response = datosInterno.filter((element) => {
+                    if (element.legajo == evento) {
+                        return element;
+                    }
+                })
+                setDatosInterno(response);
+            }else{
+                obtenerDatosInterno();
+            }
+        } catch (error) {
+            console.log("Error al filtrar datos: ", error);
+        }
+    }
+
+    const buscarIdDelito = (evento) => {
+        //realizo una busqueda de legajo con los datos obtenidos de internos
+        try {
+            if (!isNaN(evento) && evento > 0) {
+                const response = datosDelito.filter((element) => {
+                    if (element.idDelito == evento) {
+                        return element;
+                    }
+                })
+                setDatosDelito(response);
+            }else{
+                obtenerDatosDelito();
+            }
         } catch (error) {
             console.log("Error al filtrar datos: ", error);
         }
@@ -128,6 +195,14 @@ function ContextProvider({ children }) {
     const legajoInput = (evento) => {
         //realizo la busqueda
         buscarLegajo(evento.target.value);
+    }
+
+    function filterInterno(evento) {
+        buscarLegajoInterno(evento);
+    }
+
+    function filterDelito(evento) {
+        buscarIdDelito(evento);
     }
 
 
@@ -432,8 +507,23 @@ function ContextProvider({ children }) {
         }
     }
 
+    async function informeXFecha(fecha) {
+        try {
+            const response = await fetch("http://localhost:8080/api/condena/fecha?fecha=" + fecha)
+            if (!response.ok) {
+                throw new Error("error al generar informe por fecha");
+            }
+
+            const objeto = await response.json();
+            setDatosInformePorFecha(objeto);
+        } catch (error) {
+            console.log("Error: ", error);
+        }
+    }
+
+
     /*=================================================================================================================================================*/
-    /*=====================================================Modificacion de condenas====================================================================*/
+    /*=====================================================Funciones de condenas====================================================================*/
     /*=================================================================================================================================================*/
     async function obtenerDatosCondena() {
         try {
@@ -449,14 +539,15 @@ function ContextProvider({ children }) {
         }
     }
 
-    async function obtenerCondena(id) {
+    function obtenerCondena(id) {
         try {
             const response = datosCondena.find(element => element.legajo?.legajo === id);
             if (response) {
                 setObjetoCondena(response);
+                return response;
             } else {
-                throw new Error("Condena inexistente");
                 setObjetoCondena({});
+                return null;
             }
 
 
@@ -531,6 +622,8 @@ function ContextProvider({ children }) {
                 if (campos.includes(e) && datosForm[e]?.trim()) {
                     if (e === "intFechNac") {
                         objeto = validarFechaNac(objeto);
+                    } else if (e === "fechaInforme") {
+                        objeto = validarFechaInforme(objeto);
                     } else {
                         objeto = validarFecha(e, objeto);
                     }
@@ -576,13 +669,13 @@ function ContextProvider({ children }) {
 
             return tmp;
         } catch (error) {
-
+            return tmp;
         }
     }
 
     function validarSexo(tmp) {
         try {
-            const sexo = datosForm?.intSexo.trim();
+            const sexo = datosForm?.intSexo?.trim();
             const penitenciaria = datosPenitenciaria.find((element) => (
                 element.idPenitenciaria === datosForm?.idPenitenciaria
             ))
@@ -594,6 +687,7 @@ function ContextProvider({ children }) {
 
         } catch (error) {
             console.log("Error al verificar sexo: ", error)
+            return tmp;
         }
     }
 
@@ -607,7 +701,7 @@ function ContextProvider({ children }) {
 
     function validarDuracion(tmp) {
         try {
-            const duracion = datosForm.delDuracion?.trim();
+            const duracion = datosForm?.delDuracion?.trim();
 
             if (Number(duracion) <= 0) {
                 console.log("entro al error")
@@ -616,6 +710,7 @@ function ContextProvider({ children }) {
             return tmp;
         } catch (error) {
             console.log("Error: ", error);
+            return tmp;
         }
     }
 
@@ -629,15 +724,11 @@ function ContextProvider({ children }) {
             tmp.intDni = "El DNI debe contener 8 digitos númericos";
         } else if (!legajo) {
             datosInterno.map((element) => {
-                if (element.intDni === dni) {
+                if (element.intDni === dni && element.intEstado === "activo") {
                     tmp.intDni = "El DNI ya existe en la BD"
                 }
             });
         }
-
-
-
-
         return tmp;
     }
 
@@ -657,7 +748,7 @@ function ContextProvider({ children }) {
         //si el legajo ya existe no debe realizar la validacion (si el legajo no contiene un valor numerico dará undefined "false")
         if (!legajo) {
             datosInterno.map((element) => {
-                if (element.intDni === cuil) {
+                if (element.intDni === cuil && element.intEstado === "activo") {
                     tmp.intDni = "El CUIL ya existe en la BD"
                 }
             })
@@ -670,56 +761,80 @@ function ContextProvider({ children }) {
 
     //funcion para validar fecha de nacimiento
     function validarFechaNac(tmp) {
-        const fecha = datosForm.intFechNac.trim().split("-");
-        const [anio, mes, dia] = fecha.map(Number);
+        try {
+            const fecha = datosForm?.intFechNac?.trim().split("-");
+            const [anio, mes, dia] = fecha.map(Number);
 
-        if (isNaN(anio) || anio > 2007 || anio < 1950) {
-            tmp.intFechNac = "El año debe estar entre 1950 y 2007";
-        } else if (isNaN(mes) || mes > 12 || mes < 1) {
-            tmp.intFechNac = "Mes incorrecto"
-        } else if (isNaN(dia) || dia > 31 || dia < 1) {
-            tmp.intFechNac = "Día incorrecto"
-        } else {
-            // Validar días correctos según el mes
-            const fechaValida = new Date(anio, mes - 1, dia);
-            if (
-                fechaValida.getFullYear() !== anio ||
-                fechaValida.getMonth() + 1 !== mes ||
-                fechaValida.getDate() !== dia
-            ) {
-                tmp.intFechNac = "La fecha no es válida";
+            if (isNaN(anio) || anio > 2007 || anio < 1950) {
+                tmp.intFechNac = "El año debe estar entre 1950 y 2007";
+            } else if (isNaN(mes) || mes > 12 || mes < 1) {
+                tmp.intFechNac = "Mes incorrecto"
+            } else if (isNaN(dia) || dia > 31 || dia < 1) {
+                tmp.intFechNac = "Día incorrecto"
+            } else {
+                // Validar días correctos según el mes
+                const fechaValida = new Date(anio, mes - 1, dia);
+                if (
+                    fechaValida.getFullYear() !== anio ||
+                    fechaValida.getMonth() + 1 !== mes ||
+                    fechaValida.getDate() !== dia
+                ) {
+                    tmp.intFechNac = "La fecha no es válida";
+                }
             }
-        }
 
-        return tmp;
+            return tmp;
+        } catch (error) {
+            return tmp;
+        }
     }
 
     //funcion para validar fechas ingreso, detenciòn, etc...
     function validarFecha(clave, tmp) {
-        const fecha = datosForm[clave]?.trim().split("-");
+        try {
+            const fecha = datosForm[clave]?.trim().split("-");
+            const [anio, mes, dia] = fecha.map(Number);
+            const anioActual = new Date().getFullYear();
+            const diaActual = new Date().getDate();
+            const mesActual = new Date().getMonth() + 1;
+            if (isNaN(anio) || anio > anioActual || anio < 1950) {
+                tmp[clave] = `El año no debe ser mayor a ${anioActual}`;
+            } else if (isNaN(mes) || mes > 12 || mes < 1) {
+                tmp[clave] = "Mes incorrecto"
+            } else if (isNaN(dia) || dia > 31 || dia < 1) {
+                tmp[clave] = "Día incorrecto"
+
+            } else if (fechaActual(anio, anioActual, mes, mesActual, dia, diaActual)) {//verificar si la fecha ingresada es mayor a la actual
+                tmp[clave] = `La fecha no debe ser mayor a ${diaActual}-${mesActual}-${anioActual}`;
+            }
+
+            return tmp;
+        } catch (error) {
+            return tmp;
+        }
+    }
+
+    //funcion para validar fechas ingreso, detenciòn, etc...
+    function validarFechaInforme(tmp) {
+        const fecha = datosForm.fechaInforme?.trim().split("-");
         const [anio, mes, dia] = fecha.map(Number);
         const anioActual = new Date().getFullYear();
         const diaActual = new Date().getDate();
         const mesActual = new Date().getMonth() + 1;
-        if (isNaN(anio) || anio > anioActual || anio < 1950) {
-            tmp[clave] = `El año no debe ser mayor a ${anioActual}`;
-        } else if (isNaN(mes) || mes > 12 || mes < 1) {
-            tmp[clave] = "Mes incorrecto"
-        } else if (isNaN(dia) || dia > 31 || dia < 1) {
-            tmp[clave] = "Día incorrecto"
-            //verificar si la fecha ingresada es mayor a la actual
-        } else if (fechaActual(anio, anioActual, mes, mesActual, dia, diaActual)) {
-            tmp[clave] = `La fecha no debe ser mayor a ${diaActual}-${mesActual}-${anioActual}`;
+        //verificar si la fecha ingresada no es mayor a la actual
+        if (!fechaActual(anio, anioActual, mes, mesActual, dia, diaActual)) {
+            tmp.fechaInforme = `La fecha debe ser mayor a ${diaActual}-${mesActual}-${anioActual}`;
+            return tmp;
         }
-
         return tmp;
     }
 
+
     //retorna "true si la fecha ingresada es mayor a la actual"
     function fechaActual(anio, anioActual, mes, mesActual, dia, diaActual) {
-        if (anio === anioActual) {
-            if (mes >= mesActual) {
-                if (dia > diaActual) {
+        if (anio >= anioActual) {
+            if (mes >= mesActual || anio > anioActual) {
+                if (dia > diaActual || anio > anioActual) {
                     return true;
                 } else {
                     return false;
@@ -732,25 +847,37 @@ function ContextProvider({ children }) {
         }
     }
 
+    //funcion para darle formato a la fecha "DD-MM-AAAA" 
+    function formatoFecha(fecha) {
+        try {
+            const partes = String(fecha).split('-');
+            const [anio, mes, dia] = partes;
+            return `${dia}-${mes}-${anio}`;
+
+        } catch (error) {
+            console.log("Error al convertir Fecha: ", error);
+        }
+    }
 
     //paso los datos y funciones a mi Context antes definido en la linea: 4
     return (
         <Context.Provider value={{
+            usuario, setUsuario,
             validarForm, setDatosForm, datosForm, error, setError, setCampos, campos,
             datosPenitenciaria,
+            formatoFecha,
             enviarDatosPenitenciaria,
             eliminarPenitenciaria,
             editarPenitenciaria,
-            objetoDelito, setObjetoDelito,
-            enviarDatosInternos,
-            objetoInterno, setObjetoInterno, datosInterno, obtenerDatosInterno, eliminarInterno, editarDatoInterno, obtenerCondenaAsociada,
+            enviarDatosInternos,filterInterno,objetoInterno, setObjetoInterno, datosInterno, obtenerDatosInterno, eliminarInterno, editarDatoInterno, obtenerCondenaAsociada,
             valoresEditar,
-            datosDelito, editarDatosDelito,
+            objetoDelito, setObjetoDelito,filterDelito,datosDelito, editarDatosDelito, obtenerDatosDelito,
             datosInformeIntPenDel, setDatosInformeIntPenDel, informeIntPenDel,
             datosInformeIntProfesion, setDatosInformeIntProfesion, informeIntProfesion,
             obtenerCondena, editarDatosCondena, objetoCondena, setObjetoCondena,
             datosBuscados, legajoInput,
-            login,logout,isAuthenticated
+            login, logout, isAuthenticated,
+            datosInformePorFecha, setDatosInformePorFecha, informeXFecha
         }}>
             {children}
         </Context.Provider>

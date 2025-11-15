@@ -4,10 +4,10 @@
  */
 package com.example.penitenciaria.Services;
 
+import com.example.penitenciaria.DTO.InformeXFecha;
 import com.example.penitenciaria.Entity.Condena;
 import com.example.penitenciaria.Repositorio.RepositorioCondena;
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +40,7 @@ public class ServiceCondena {
     }
     
     @Transactional
-    public void eliminar(Long id){
+    public void eliminar(long id){
         porId(id).ifPresent(condena -> {
             condena.setConEstado("inactivo");
             repositorio.save(condena);
@@ -63,10 +63,25 @@ public class ServiceCondena {
             return null;
         }
         //retorno una fecha dependiendo la duracion
-        return fechaInicio.plusYears(duracion);
+        return fechaInicio.plusMonths(duracion);
     }
     
-    public void limiteDuracion(){
     
+    
+    @Transactional(readOnly = true)
+    public List<InformeXFecha> informeXFecha(LocalDate fecha){
+        try{
+            //obtengo la consulta de la BD
+            List<InformeXFecha> informe = repositorio.informeXFecha();
+            //genero mi informe con calculos internos en mi DTO
+            informe.forEach( i -> i.generarInforme(fecha));
+            //retorno el informe generado
+            return informe;
+        }catch(Exception e){
+            System.out.println(e);
+            return null;
+        }
     }
+    
+    
 }

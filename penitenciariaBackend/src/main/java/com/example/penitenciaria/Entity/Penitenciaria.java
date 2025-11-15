@@ -11,7 +11,7 @@ public class Penitenciaria {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idPenitenciaria;
 
-    @Column(name = "penNom", nullable = false, unique = true, length = 50)
+    @Column(name = "penNom", nullable = false, length = 50)
     private String penNom;
 
     @Column(name = "penDireccion", nullable = false, length = 50)

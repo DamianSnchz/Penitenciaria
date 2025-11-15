@@ -4,6 +4,7 @@
  */
 package com.example.penitenciaria.Controller;
 
+import com.example.penitenciaria.DTO.InformeXFecha;
 import com.example.penitenciaria.Entity.Condena;
 import com.example.penitenciaria.Services.ServiceCondena;
 import java.time.LocalDate;
@@ -65,6 +66,12 @@ public class ControllerCondena {
     @DeleteMapping("/{id}")
     public void eliminar(@PathVariable Long id){
         servicio.eliminar(id);
+    }
+    
+    //con RequesParam buscara el valor despues de '?'
+    @GetMapping("/fecha")
+    public List<InformeXFecha> informeXFecha(@RequestParam("fecha") LocalDate fecha){
+        return servicio.informeXFecha(fecha);
     }
     
 }

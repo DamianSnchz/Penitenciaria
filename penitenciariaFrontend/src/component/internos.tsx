@@ -12,7 +12,7 @@ import  {InterfaceInterno} from "../interface/interfaceInternos.ts";
 
 function Internos() {
 	//función compartida del proveedor de datos
-	const { validarForm, datosForm, setDatosForm, error, setError, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar,obtenerCondenaAsociada} = useCartContext();
+	const { usuario, formatoFecha, validarForm, datosForm, setDatosForm, error, setError, setCampos, datosPenitenciaria, enviarDatosInternos,objetoInterno, setObjetoInterno,datosInterno,eliminarInterno,editarDatoInterno,valoresEditar,obtenerCondenaAsociada, filterInterno,obtenerDatosInterno} = useCartContext();
 
 
 	
@@ -22,12 +22,15 @@ function Internos() {
 		setCampos(["intApellido", "intNombre", "intSexo", "intAlias", "intFechNac", "intEstadoCivil", "intDptoNac",
 			"intPciaNac", "intNacionalidad", "intProfesion", "intDni", "intTipo","delito","juez", 
 			"idPenitenciaria","fechaIngreso","intDomicilio"]);
+		
 
 		return() => {
 			//limpio "campos" para que al ingresar al componente "delitos" pueda cargar los ID de sus nuevos inputs
 			//para hacer las validaciones
 			setCampos([]);
 			setError({});
+			//En caso de hacer un filtrado y que los datos no se hayan restaurado en el mismo filtrado
+			obtenerDatosInterno();
 		}
 	}, [])//se ejecuta solo una vez cuando se realiza el montaje y desmontaje
 
@@ -45,6 +48,9 @@ function Internos() {
 			setDatosForm({...datosForm, idPenitenciaria: id});
 			//agrego el subObjeto penitenciaria al objeto internos
 			setObjetoInterno({...objetoInterno, idPenitenciaria: {...penitenciaria}})
+		}else if(e.target.name === "filter"){
+			//para realizar el filtrado por legajos
+			filterInterno(e.target.value);
 		}else{
 			//El operador spread "dispersar" (...) copia todas las propiedades del objeto datosForm en un nuevo objeto
 			//Por medio de los corchetes indico que a e.target.name lo utilice como clave de objeto 
@@ -84,7 +90,7 @@ function Internos() {
 							Registrar, modificar y gestionar datos personales de internos, incluyendo información de ingreso.
 						</h4>
 					</div>
-					<Link to={"/registrarDelito"} className={`btn btn-outline-secondary btn-sm ${datosForm.legajo ? "disabled" : ""}`}>Registrar Delito</Link>
+					<Link to={"/registrarDelito"} className={`btn btn-primary btn-sm ${datosForm.legajo || usuario.usuRol === "personal" ? "disabled" : ""}`}>Registrar Delito</Link>
 				</div>
 				<div className="form-container ">
 					<h2> Información del Inteno</h2>
@@ -215,10 +221,10 @@ function Internos() {
 							</div>
 						</div>
 						<div className="d-flex justify-content-end">
-							<button className="btn btn-primary mx-2" type="submit">
+							<button className={`btn btn-primary mx-2 ${usuario.usuRol !== "personal"? "": "disabled"}`} type="submit">
 								Guardar
 							</button>
-							<button className="btn btn-outline-secondary" type="button" onClick={()=>{setDatosForm({}); setObjetoInterno({}); setError({}) }} >
+							<button className="btn btn-secondary" type="button" onClick={()=>{setDatosForm({}); setObjetoInterno({}); setError({}) }} >
 								Cancelar
 							</button>
 						</div>
@@ -226,8 +232,8 @@ function Internos() {
 				</div>
 				<div className="input-container">
 					<div className="w-100">
-						<label className="form-label">Buscar Legajo</label>
-						<input className="" type="text" style={{ width: "100%" }} />
+						<label className="form-label" htmlFor="filter">Buscar Legajo</label>
+						<input id="filter" name="filter" type="number" style={{ width: "100%" }} onChange={handleChange} />
 					</div>
 				</div>
 				<h2>Internos Existentes</h2>
@@ -250,27 +256,25 @@ function Internos() {
         					//buscamos la condena asociada
         					const condena = obtenerCondenaAsociada(i.legajo);
 							//Retornar el JSX
-        					return ( 
-            					i.intEstado === "activo" ?
+        					return (
             					<tr key={i.legajo}>
                 					<th scope="row">{i.legajo}</th>
                 					<td>{i.intNombre}</td>
                 					<td>{i.intApellido}</td>
                 					<td>{i.intDni}</td>
-                					<td>{String(i.intFechNac)}</td>
+                					<td>{formatoFecha(i.intFechNac)}</td>
                 					<td>{i.idDelito.delDelito}</td>
                 					<td>{i.idPenitenciaria.penNom}</td>
-                					<td>{condena?.conFechFinCon}</td>
+                					<td>{formatoFecha(condena?.conFechFinCon)}</td>
                 					<td>
-                    					<button className="btn btn-primary btn-sm me-2" onClick={()=> valoresEditar(i)}>
+                    					<button className={`btn btn-primary btn-sm me-2 ${usuario.usuRol !== "personal"? "": "disabled"}`} onClick={()=> valoresEditar(i)}>
                         					Editar
                     					</button>
-                    					<button className="btn btn-danger btn-sm" onClick={()=> eliminarInterno(i.legajo)}>
+                    					<button className={`btn btn-danger btn-sm ${usuario.usuRol !== "personal" && usuario.usuRol !== "admin" ? "": "disabled"}`} onClick={()=> eliminarInterno(i.legajo)}>
                         					Eliminar
                     					</button>
                 					</td>
-            					</tr> 
-            					: null
+            					</tr>
         					);
     					})} 
 					</tbody>

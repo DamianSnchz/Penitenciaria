@@ -9,7 +9,7 @@ import { InterfacePenitenciaria } from "../interface/interfacePenitenciaria";
 function Penitenciaria() {
 
     //importamos mis datos y funciones de mi proveedor
-    const { validarForm, datosForm, setDatosForm, setCampos, error, datosPenitenciaria,enviarDatosPenitenciaria, eliminarPenitenciaria,editarPenitenciaria} = useCartContext();
+    const {usuario, validarForm, datosForm, setDatosForm, setCampos, error, datosPenitenciaria,enviarDatosPenitenciaria, eliminarPenitenciaria,editarPenitenciaria} = useCartContext();
 
     useEffect(() => {
         setCampos(["penNom", "penCapacidad", "penDireccion", "penTipo", "penLocalidad"]);
@@ -89,7 +89,7 @@ function Penitenciaria() {
                             </select>
                             {error.penTipo && <span className="error">{error.penTipo}</span>}
                         </div>
-                        <button className="btn btn-primary" type="submit">
+                        <button className={`btn btn-primary ${usuario.usuRol !== "personal"? "": "disabled"}`} type="submit">
                             Agregar Penitenciaria
                         </button>
                     </form>
@@ -119,10 +119,10 @@ function Penitenciaria() {
                                 <td>{e.penCapacidad}</td>
                                 <td>{e.penTipo}</td>
                                 <td>
-                                    <button className="btn btn-primary btn-sm me-2" onClick={()=> setDatosForm(e)}>
+                                    <button className={`btn btn-primary btn-sm me-2 ${usuario.usuRol !== "personal"? "": "disabled"}`} onClick={()=> setDatosForm(e)}>
                                         Editar
                                     </button>
-                                    <button className="btn btn-danger btn-sm" onClick={() => eliminarPenitenciaria(e.idPenitenciaria)}>
+                                    <button className={`btn btn-danger btn-sm ${usuario.usuRol !== "personal" && usuario.usuRol !== "admin" ? "": "disabled"}`} onClick={() => eliminarPenitenciaria(e.idPenitenciaria)}>
                                         Eliminar
                                     </button>
                                 </td>

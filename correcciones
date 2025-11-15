@@ -1,0 +1,15 @@
+*Generar informe mostrando un porcentaje ingresando una fecha determinada y la fecha actual.
+
+*Manejar las condenas en meses.
+
+*Resolver el ingreso de legajo para la busqueda.
+
+Modificar los iconos.
+
+*Modificar para que en la validacion al ingresar datos primero verifique que no este activo o inactivo (caso de datos únicos)
+
++Cuando estoy en MD condena y vuelvo a internos no me deja ingresar a registrar delito.
+
+*Controlar las opciones del login
+
+-Agregar un Dashboar con indicares mostrando almenos 4.
