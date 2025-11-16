@@ -43,7 +43,7 @@ public class ControllerPenitenciaria {
 
     // Actualizar (opcional)
     @PutMapping("/{id}")
-    public void actualizar(@PathVariable Long id, @RequestBody Penitenciaria penitenciaria) {
+    public void editar(@PathVariable Long id, @RequestBody Penitenciaria penitenciaria) {
         penitenciaria.setIdPenitenciaria(id); // asegurarse de que se actualiza la entidad correcta
         service.guardar(penitenciaria);
     }

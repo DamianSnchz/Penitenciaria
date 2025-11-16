@@ -24,4 +24,6 @@ public interface RepositorioCondena extends JpaRepository<Condena, Long>{
     
     @Query("SELECT new com.example.penitenciaria.DTO.InformeXFecha(c.legajo.idPenitenciaria.penNom, c.idDelito.delDelito, c.legajo.intNombre,c.legajo.intApellido, c.legajo.intDni, c.conFechIniCon, c.conFechFinCon) FROM Condena c WHERE c.conEstado = 'activo'")
     public List<InformeXFecha> informeXFecha();
+    
+    public List<Condena> findByConEstado(String estado);
 }

@@ -5,6 +5,7 @@
 package com.example.penitenciaria.Repositorio;
 
 import com.example.penitenciaria.Entity.Delito;
+import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
@@ -16,4 +17,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface RepositorioDelito extends JpaRepository<Delito , Long>{
     
+    public List<Delito> findByDelEstado(String estado);
 }

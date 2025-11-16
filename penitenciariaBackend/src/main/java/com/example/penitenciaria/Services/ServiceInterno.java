@@ -43,7 +43,7 @@ public class ServiceInterno {
     private ServiceCondena servicioCondena;
 
     public List<Interno> listar() {
-        return r.findAll();
+        return r.findByIntEstado("activo");
     }
 
     @Transactional

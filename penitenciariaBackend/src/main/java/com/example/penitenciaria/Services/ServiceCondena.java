@@ -26,7 +26,7 @@ public class ServiceCondena {
     
     @Transactional(readOnly = true)
     public List<Condena> listar(){
-        return repositorio.findAll();
+        return repositorio.findByConEstado("activo");
     }
     
     @Transactional(readOnly = true)

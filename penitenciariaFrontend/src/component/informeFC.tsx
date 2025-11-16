@@ -3,24 +3,24 @@ import { useCartContext } from "../contextProvider/context.jsx"
 import { InterfaceInformeFecha } from "../interface/interfaceInformeFecha.ts";
 
 function InformeFC() {
-    const { setDatosInformePorFecha,datosInformePorFecha, informeXFecha,setCampos, validarForm, setDatosForm, datosForm, error,formatoFecha} = useCartContext();
-    
-    useEffect(()=>{
+    const { setDatosInformePorFecha, datosInformePorFecha, informeXFecha, setCampos, validarForm, setDatosForm, datosForm, error, formatoFecha } = useCartContext();
+
+    useEffect(() => {
         setCampos(["fechaInforme"]);
-        return () =>{
+        return () => {
             setDatosInformePorFecha([]);
         }
-    },[])
+    }, [])
 
-    function changeHandler(e:any){
+    function changeHandler(e: any) {
         const value = e.target.value;
-        setDatosForm({...datosForm, [e.target.name] : value});
+        setDatosForm({ ...datosForm, [e.target.name]: value });
         setDatosInformePorFecha([]);
     }
 
-    function onSubmit(){
+    function onSubmit() {
         const valor = validarForm(["fechaInforme"]);
-        if(valor){
+        if (valor) {
             informeXFecha(datosForm.fechaInforme);
         }
     }
@@ -39,7 +39,7 @@ function InformeFC() {
                 <br />
                 <div className="d-flex flex-column mb-4">
                     <label className="form-label" htmlFor="fechaInforme">Fecha de corte</label>
-                    <input type="date" className="w-50" name="fechaInforme" id="fechaInforme" onChange={changeHandler}/>
+                    <input type="date" className="w-50" name="fechaInforme" id="fechaInforme" onChange={changeHandler} />
                     {error.fechaInforme && <span className="error">{error.fechaInforme}</span>}
                 </div>
                 <button className="btn btn-primary" type="submit" onClick={onSubmit}>
@@ -69,7 +69,12 @@ function InformeFC() {
                                 <td>{formatoFecha(i.fechaInicio)}</td>
                                 <td>{formatoFecha(i.fechaFin)}</td>
                                 <td>{formatoFecha(i.fechaIngresada)}</td>
-                                <td>{i.porcentaje.toFixed(2) + "%"}</td>
+                                <td>
+                                    {(i.porcentaje ?? 0).toFixed(2) + "%"}
+                                    <div className="progress" role="progressbar" aria-label="Basic example" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100}>
+                                        <div className="progress-bar" style={{width: `${(i.porcentaje ?? 0).toFixed(2)}%` }}></div>
+                                    </div>
+                                </td>
                             </tr>
                         ))}
                     </tbody>

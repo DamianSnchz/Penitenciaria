@@ -29,4 +29,6 @@ public interface RepositorioInterno extends JpaRepository<Interno, Long>{
     @Query("SELECT new com.example.penitenciaria.DTO.InformeIntXProfesion(i.intProfesion, i.intNombre, i.intApellido, i.intDni, i.intFechNac) FROM Interno i WHERE i.intEstado = 'activo' AND i.intProfesion IS NOT NULL ORDER BY i.intProfesion")
     public List<InformeIntXProfesion> informeIntXProfesion();
     
+    public List<Interno> findByIntEstado(String estado);
+    
 }

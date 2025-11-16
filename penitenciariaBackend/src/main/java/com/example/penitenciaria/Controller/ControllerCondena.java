@@ -8,9 +8,13 @@ import com.example.penitenciaria.DTO.InformeXFecha;
 import com.example.penitenciaria.Entity.Condena;
 import com.example.penitenciaria.Services.ServiceCondena;
 import java.time.LocalDate;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +42,19 @@ public class ControllerCondena {
     public Optional<Condena> porId(@PathVariable Long id){
         return servicio.porId(id);
     }
+    
+    /*@GetMapping("/{id}")
+    public ResponseEntity<?> porId(@PathVariable Long id){
+        return servicio.porId(id).map(element -> {
+            if(element.getConEstado().equals("activo")){
+                return ResponseEntity.ok(element);
+            }else{
+                Map<String, String> msjError = new HashMap<>();
+                msjError.put("error", "Usuario inactivo");
+                return ResponseEntity.ofNullable(msjError);
+            }
+        }).orElse(null);
+    }*/
     
     @PutMapping("/{id}")
     public void editar(@PathVariable Long id, @RequestBody Condena condena){

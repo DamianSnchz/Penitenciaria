@@ -21,7 +21,7 @@ public class ServiceDelito {
     RepositorioDelito repositorio;
     
     public List<Delito> listar(){
-        return repositorio.findAll();
+        return repositorio.findByDelEstado("activo");
     }
     
     public void eliminar(Long id){

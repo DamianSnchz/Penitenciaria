@@ -17,7 +17,7 @@ public class ServicePenitenciaria {
     private RepositorioPenitenciaria p;
 
     public List<Penitenciaria> listar(){
-        return p.findAll();
+        return p.findByPenEstado("activo");
     }
 
     public Optional<Penitenciaria> porId(Long id){
