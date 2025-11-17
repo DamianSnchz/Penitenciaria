@@ -1,9 +1,9 @@
 export interface InterfacePenitenciaria{
     idPenitenciaria: number;
-    penNom: string;
-    penDireccion:string;
-    penTipo:string;
+    penNom: String;
+    penDireccion:String;
+    penTipo:String;
     penCapacidad: number;
     penLocalidad: String;
-    penEstado: string;
+    penEstado: String;
 }

@@ -107,6 +107,10 @@ function NavBar() {
                     </li>
                 </ul>
             </nav>
+            <footer className="sidebar-footer " style={{width: "250px", marginTop: "100%"}}>
+                <p>&copy; {new Date().getFullYear()} BravoSanchezJorgeDamian</p>
+                <p>Todos los derechos reservados.</p>
+            </footer>
         </header>
     );
 }

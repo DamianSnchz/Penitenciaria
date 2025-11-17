@@ -2,13 +2,12 @@ import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCartContext } from "../contextProvider/context.jsx";
 
-
 function RegistrarD() {
     
     //variable para la navegación
     const navegar = useNavigate();
     //variables y funciones de mi proveedor de datos
-    const {validarForm,setCampos, setDatosForm,datosForm, error, setError,setObjetoDelito, objetoDelito,objetoInterno, setObjetoInterno,editarDatosDelito} = useCartContext();
+    const {listaDelito,validarForm,setCampos, setDatosForm,datosForm, error, setError,setObjetoDelito, objetoDelito,objetoInterno, setObjetoInterno,editarDatosDelito} = useCartContext();
     
 
 
@@ -17,7 +16,7 @@ function RegistrarD() {
         //cargamos los campos de los inputs para hacer las validacios
         setCampos(["delDelito","delJuez","delFechDet","delFechIniCondena","delDuracion"]);
         
-
+       
         return()=>{
             //limpio "campos"
             setCampos([]);
@@ -74,8 +73,9 @@ function RegistrarD() {
                             <label className="form-label" htmlFor="delDelito">Delito</label>
                             <select className="w-50" id="delDelito" onChange={handleChange} name="delDelito" value={datosForm?.delDelito ?? ""}>
                                 <option value="" >Seleccione Delito</option>
-                                <option value="Homicidio">Homicidio</option>
-                                <option value="Asesinado">Asesinato</option>
+                                {listaDelito.map((delito: string, index:number)=>(
+                                    <option key={index} value={delito}>{delito}</option>
+                                ))}
                             </select>
                             {error.delDelito && <span className="error">{error.delDelito}</span>}
                         </div>

@@ -33,21 +33,18 @@ function ContextProvider({ children }) {
     const [datosInformePorFecha, setDatosInformePorFecha] = useState([]);
     //variable para almacenar los datos de condenas provenientes de la petición GET
     const [datosCondena, setDatosCondena] = useState([]);
-    // almacena los datos buscados, es utilizado en buscarDatos()
-    //luego su valor pasara a setDatos() para ser mostrados
-    const [buscar, setBuscar] = useState([]);
     //estados para validar formularios
     const [datosForm, setDatosForm] = useState({});
     //estado para guardar los datos que se buscan
     const [datosBuscados, setDatosBuscados] = useState([]);
     //estado para permitir el acceso de login
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-
     //estados para mostrar los errores en el formulario
     const [error, setError] = useState({});
     //estados para almacenal el nom de los campos de los inputs para poder pasarlos como parametros
     const [campos, setCampos] = useState([]);
+    //lista de delitos
+    const listaDelito = ["Homicidio","Robo","Estafa","Hurto","Fraude Fiscal","Trafico de Drogas"];
 
     /*=================================================================================================================================================*/
     /*=====================================================Funciones =================================================================================*/
@@ -68,28 +65,6 @@ function ContextProvider({ children }) {
     useEffect(() => {
         obtenerDatosCondena();
     }, [datosInterno, datosDelito])
-
-    // funcion de busqueda filtrado
-    /*const buscarDatos = (ev) => {
-        //filtro para obtener los datos buscados
-        let result = buscar.filter((element) => {
-            //primera condición: selecciono en "title" me aseguro que sea un string con "toString()" convierto el string en minuscula
-            //toLowerCase() luego con includes() compruebo que el String ingresado existe en el array (esta primera condición es aplicada para la busqueda)
-            //Segunda condición: cumple con la misma lógica pero con el type (esta condición se aplica al filtrado) 
-            if (element.title.toString().toLowerCase().includes(ev.toLowerCase())) {
-                return element;
-            }
-        });
-        setDatos(result);
-    }
-
-    // funcion de busqueda recibe una cadena del input o un valor del selection
-    const textInput = (ev) => {
-        //realizo la busqueda
-        buscarDatos(ev.target.value);
-    }*/
-
-
 
     /*=================================================================*/
     /*==================== Funciones de Autenticación =================*/
@@ -871,10 +846,10 @@ function ContextProvider({ children }) {
             editarPenitenciaria,
             enviarDatosInternos,filterInterno,objetoInterno, setObjetoInterno, datosInterno, obtenerDatosInterno, eliminarInterno, editarDatoInterno, obtenerCondenaAsociada,
             valoresEditar,
-            objetoDelito, setObjetoDelito,filterDelito,datosDelito, editarDatosDelito, obtenerDatosDelito,
+            listaDelito,objetoDelito, setObjetoDelito,filterDelito,datosDelito, editarDatosDelito, obtenerDatosDelito,
             datosInformeIntPenDel, setDatosInformeIntPenDel, informeIntPenDel,
             datosInformeIntProfesion, setDatosInformeIntProfesion, informeIntProfesion,
-            obtenerCondena, editarDatosCondena, objetoCondena, setObjetoCondena,
+            datosCondena,obtenerCondena, editarDatosCondena, objetoCondena, setObjetoCondena,
             datosBuscados, legajoInput,
             login, logout, isAuthenticated,
             datosInformePorFecha, setDatosInformePorFecha, informeXFecha
